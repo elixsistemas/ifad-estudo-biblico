@@ -1,3 +1,24 @@
+﻿# Node / Yarn / PNPM
 node_modules/
+npm-debug.log*
+yarn-*.log*
+pnpm-*.log*
+
+# Gatsby
 .cache/
-public
+public/
+
+# Env
+.env
+.env.*
+!.env.example
+
+# IDE / SO
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+
+# Netlify/Vercel
+.netlify/
+.vercel/

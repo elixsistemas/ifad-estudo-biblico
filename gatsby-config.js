@@ -1,9 +1,15 @@
-/**
- * @type {import('gatsby').GatsbyConfig}
- */
 module.exports = {
   siteMetadata: {
-    siteUrl: `https://www.yourdomain.tld`,
+    title: "IFAD Leitura",
+    description: "SSG + SPA com plano de leitura bíblica (Gatsby v5).",
   },
-  plugins: [],
-}
+  plugins: [
+    "gatsby-plugin-image",
+    "gatsby-plugin-sharp",
+    "gatsby-transformer-sharp",
+    {
+      resolve: "gatsby-source-filesystem",
+      options: { name: "plan", path: `${__dirname}/content/plan` },
+    },
+  ],
+};
