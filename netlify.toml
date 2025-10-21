@@ -2,25 +2,7 @@
   command = "npm run build"
   publish = "public"
 
-[build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS = "--no-fund --no-audit"
-
-# SPA client-only para /app/*
 [[redirects]]
   from = "/app/*"
   to = "/app/index.html"
   status = 200
-
-# Caching básico de assets (opcional, seguro)
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
-
-# Netlify Forms: nada especial aqui se os <form> já têm name + netlify
