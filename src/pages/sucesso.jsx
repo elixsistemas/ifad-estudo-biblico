@@ -1,11 +1,15 @@
 import * as React from "react";
+import SiteHeader from "../components/SiteHeader";
 
-export default function Sucesso() {
+export default function Sucesso(){
   return (
-    <main style={{maxWidth:720, margin:"40px auto", padding:"0 16px"}}>
-      <h1>Recebemos seu pedido ✨</h1>
-      <p>Obrigado! Em breve alguém da IFAD entrará em contato.</p>
-      <a href="/">Voltar ao início</a>
-    </main>
+    <>
+      <SiteHeader />
+      <main className="container">
+        <h1>Recebemos sua mensagem ✅</h1>
+        <p>Obrigado! Em breve entraremos em contato.</p>
+        <p><a className="btn" href="/plano">Voltar ao Plano</a></p>
+      </main>
+    </>
   );
 }

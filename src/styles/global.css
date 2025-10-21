@@ -57,3 +57,8 @@ html[data-theme="light"] .progress .label{color:#111}
 :focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:8px}
 .hidden{display:none}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.hidden { display:none; }
+.alert { background:#ffe9e9; color:#7a1f1f; padding:.75rem 1rem; border-radius:.5rem; }
+.form .field { margin-bottom: .875rem; }
+.form .field > label { display:block; font-weight:600; margin-bottom:.25rem; }
+.form .field > input, .form .field > textarea { width:100%; }
