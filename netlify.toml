@@ -5,24 +5,3 @@
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--no-fund --no-audit"
-
-# Cache imutável de assets
-[[headers]]
-  for = "/*.js"
-  [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/*.css"
-  [headers.values]
-  Cache-Control = "public, max-age=31536000, immutable"
-
-# Segurança básica (ajuste se necessário)
-[[headers]]
-  for = "/"
-  [headers.values]
-  Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self';"
-  Referrer-Policy = "strict-origin-when-cross-origin"
-  X-Content-Type-Options = "nosniff"
-  X-Frame-Options = "DENY"
-  Permissions-Policy = "geolocation=(), microphone=(), camera=()"
