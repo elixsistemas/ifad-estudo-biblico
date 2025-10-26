@@ -1,24 +1,43 @@
-﻿# Node / Yarn / PNPM
+﻿# --- Node / Package managers ---
 node_modules/
 npm-debug.log*
 yarn-*.log*
 pnpm-*.log*
+package-lock.json-*
+yarn.lock-*
+.pnp.*
+.pnpm-debug.log*
 
-# Gatsby
+# --- Gatsby build cache/output ---
 .cache/
 public/
 
-# Env
+# (se você usar Gatsby Cloud localmente)
+.gatsby/
+
+# --- Environment files ---
 .env
-.env.*
+.env.*        # mantenha um exemplo separado
 !.env.example
 
-# IDE / SO
-.DS_Store
+# --- OS / IDE noise ---
+**/.DS_Store
 Thumbs.db
 .vscode/
+.idea/
 *.swp
 
-# Netlify/Vercel
+# --- Tests / Coverage (se usar Jest/Cypress) ---
+coverage/
+cypress/videos/
+cypress/screenshots/
+playwright-report/
+test-results/
+
+# --- Netlify / Vercel runtime dirs locais ---
 .netlify/
 .vercel/
+
+# --- Misc: parcel/webpack caches em ambientes diversos ---
+.parcel-cache/
+*.tsbuildinfo
