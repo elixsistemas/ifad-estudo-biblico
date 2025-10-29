@@ -3,6 +3,8 @@ import { Router, Link } from "@gatsbyjs/reach-router";
 import Reader from "../../spa/Reader";
 import Busca from "../../spa/Busca";
 import SiteHeader from "../../components/SiteHeader";
+import SEO from "../../components/SEO";
+export const Head = ({ location }) => <SEO pathname={location.pathname} />;
 
 export default function AppRoot() {
   return (

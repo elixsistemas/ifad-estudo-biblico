@@ -8,6 +8,7 @@ module.exports = {
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
     "gatsby-transformer-sharp",
+    "gatsby-plugin-emotion",
 
     { resolve: "gatsby-source-filesystem", options: { name: "plan", path: `${__dirname}/content/plan` } },
     { resolve: "gatsby-source-filesystem", options: { name: "devocionais", path: `${__dirname}/content/devocionais/` } },

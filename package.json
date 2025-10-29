@@ -16,6 +16,7 @@
     "gen:plan:otnt": "node scripts/generate-plan.js otnt"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
     "@gatsbyjs/reach-router": "^2.0.1",
     "@mdx-js/react": "^2.3.0",
     "gatsby": "^5.14.6",
@@ -25,6 +26,8 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@emotion/styled": "^11.14.1",
+    "gatsby-plugin-emotion": "^8.15.0",
     "gatsby-plugin-image": "^3.15.0",
     "gatsby-plugin-manifest": "^5.15.0",
     "gatsby-plugin-robots-txt": "^1.8.0",

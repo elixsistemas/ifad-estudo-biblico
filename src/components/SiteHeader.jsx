@@ -34,6 +34,7 @@ export default function SiteHeader() {
           <Link to="/plano">Plano Anual</Link>
           <Link to="/app/reader">Leitura</Link>
           <Link to="/app/busca">Busca</Link>
+          <Link to="/criar-imagem">Criar imagem</Link>
           <Link to="/pedido-oracao">Pedido de Oração</Link>
           <Link to="/contato">Contato</Link>
           <button className="theme-switch" onClick={() => setTheme(t=>t==="dark"?"light":"dark")}>
