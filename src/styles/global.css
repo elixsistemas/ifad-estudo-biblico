@@ -416,3 +416,55 @@ html[data-theme="light"] .progress .label{color:#111}
 
 .reading-row .label { position: relative; z-index: 1; font-weight: 700; letter-spacing: .2px; }
 .reading-row .chev { position: relative; z-index: 1; margin-left: auto; opacity: .55; font-weight: 900; }
+/* Topo imersivo */
+.focus-top{
+  position: sticky; top: 0; z-index: 25;
+  padding: 10px 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 12px;
+}
+.top-btn{
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 36px; min-width: 36px; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: transparent; color: var(--fg); cursor: pointer;
+}
+.chips{ display:flex; gap:8px; flex:1; }
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:999px;
+  border:1px solid var(--line); background:var(--card2);
+  font-weight:800;
+}
+.top-actions{ display:flex; gap:8px; }
+
+/* Corpo da leitura */
+.reading{ line-height: 1.9; }
+.reading .texto li{ margin-bottom: 6px; }
+
+/* Barra inferior */
+.focus-bottom{
+  position: sticky; bottom: 0; z-index: 25;
+  background: linear-gradient(180deg, transparent, var(--bg) 40%);
+  padding: 10px 0 14px; border-top: 1px solid var(--line);
+}
+.progress-mini{ text-align:center; color: var(--muted); margin: 0 0 8px; }
+
+/* lista do dia (já usado) */
+.readings { list-style: none; padding: 0; display: grid; gap: 10px; }
+.reading-row{
+  position: relative; display: flex; align-items: center; gap: 12px;
+  background: var(--card2); border: 1px solid var(--line);
+  border-radius: 12px; padding: 14px 14px;
+}
+.reading-row .row-link{ position: absolute; inset: 0; border-radius: inherit; }
+.reading-row .dot{
+  position: relative; z-index: 1; width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--line); background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.reading-row .dot.on{ background:#163a22; border-color:#1e7a3f; }
+.reading-row .dot.on::after{ content:"✓"; font-weight:800; color:#c3f2cd; font-size:13px; }
+.reading-row .label{ position:relative; z-index:1; font-weight:700; letter-spacing:.2px; }
+.reading-row .chev{ position:relative; z-index:1; margin-left:auto; opacity:.55; font-weight:900; }
