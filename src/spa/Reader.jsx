@@ -4,77 +4,52 @@ import VersionSelect from "../components/VersionSelect";
 import BookSelect from "../components/BookSelect";
 import ChapterSelect from "../components/ChapterSelect";
 import VerseSelect from "../components/VerseSelect";
-import { Link } from "gatsby";
-
 const TOKEN = process.env.GATSBY_BIBLIA_TOKEN;
-const DEFAULT_VERSION = "acf";
 
-// ---------- fetch helpers ----------
+// ---------- helpers de fetch ----------
 async function getJsonOrError(res){
   const t = await res.text();
-  try{
+  try {
     const j = t ? JSON.parse(t) : {};
     if(!res.ok) throw new Error(j?.msg || j?.message || `HTTP ${res.status}`);
     return j;
-  }catch{
+  } catch {
     if(!res.ok) throw new Error(t || `HTTP ${res.status}`);
     return {};
   }
 }
 async function fetchChapter({version,abbrev,chapter}){
-  const url=`https://www.abibliadigital.com.br/api/verses/${version}/${abbrev}/${chapter}`;
-  const res=await fetch(url,{headers:{Authorization:`Bearer ${TOKEN}`,Accept:"application/json"}});
+  const url = `https://www.abibliadigital.com.br/api/verses/${version}/${abbrev}/${chapter}`;
+  const res = await fetch(url,{headers:{Authorization:`Bearer ${TOKEN}`,Accept:"application/json"}});
   return getJsonOrError(res);
 }
 async function fetchVerse({version,abbrev,chapter,number}){
-  const url=`https://www.abibliadigital.com.br/api/verses/${version}/${abbrev}/${chapter}/${number}`;
-  const res=await fetch(url,{headers:{Authorization:`Bearer ${TOKEN}`,Accept:"application/json"}});
+  const url = `https://www.abibliadigital.com.br/api/verses/${version}/${abbrev}/${chapter}/${number}`;
+  const res = await fetch(url,{headers:{Authorization:`Bearer ${TOKEN}`,Accept:"application/json"}});
   return getJsonOrError(res);
 }
 async function fallback({abbrev,chapter,number}){
-  const ref=number?`${abbrev}+${chapter}:${number}`:`${abbrev}+${chapter}`;
-  let r=await fetch(`https://bible-api.com/${encodeURIComponent(ref)}?translation=almeida`);
-  const d=await r.json();
-  if(d?.text) return {book:{name:abbrev.toUpperCase()},chapter:`${chapter}`,number,text:d.text};
+  const ref = number ? `${abbrev}+${chapter}:${number}` : `${abbrev}+${chapter}`;
+  let r = await fetch(`https://bible-api.com/${encodeURIComponent(ref)}?translation=almeida`);
+  const d = await r.json();
+  if(d?.text) return {book:{name:"Fallback"},chapter:`${chapter}`,number,text:d.text};
   if(Array.isArray(d?.verses))
-    return {book:{name:abbrev.toUpperCase()},chapter:{number:chapter},verses:d.verses.map(v=>({number:v.verse,text:v.text}))};
+    return {book:{name:"Fallback"},chapter:{number:chapter},verses:d.verses.map(v=>({number:v.verse,text:v.text}))};
   throw new Error("Fallback falhou");
 }
 
-// ---------- plano helpers ----------
+// ---------- helpers de plano ----------
 function dayIndex(dayId){ return plan.dias.findIndex(d => d.id === dayId); }
 function dayByIndex(i){ return (i>=0 && i<plan.dias.length) ? plan.dias[i] : null; }
 function parseRef(r){ const [b,rest]=r.toLowerCase().split(" "); const [c,v]=(rest||"").split(":"); return { book:b, chapter:Number(c||1), verse: v?Number(v):"" }; }
 function seqDoPlano(dayId){ const dia = plan.dias.find(d=>d.id===dayId); return dia ? dia.refs.map(parseRef) : null; }
-
-// items lidos do dia (bolinha)
-const STORAGE_ITEMS = "ifad_plan_read_items";
-function getReadSet(dayId){
-  try { const all = JSON.parse(localStorage.getItem(STORAGE_ITEMS) || "{}"); return new Set(all[dayId] || []); }
-  catch { return new Set(); }
-}
-function saveReadSet(dayId, set){
-  try { const all = JSON.parse(localStorage.getItem(STORAGE_ITEMS) || "{}"); all[dayId] = [...set]; localStorage.setItem(STORAGE_ITEMS, JSON.stringify(all)); }
-  catch {}
-}
-
-// dia concluído (progress bar do plano anual)
-function markDayDone(dayId){
-  try{
-    const raw = localStorage.getItem("ifad_plan_read");
-    const arr = raw ? JSON.parse(raw) : [];
-    const set = new Set(arr); set.add(dayId);
-    localStorage.setItem("ifad_plan_read", JSON.stringify([...set]));
-    window.dispatchEvent(new Event("plan:updated"));
-  }catch{}
-}
 
 // ---------- URL helpers ----------
 function readParams(){
   if(typeof window==="undefined") return {};
   const sp=new URLSearchParams(window.location.search);
   return {
-    version:(sp.get("version")||DEFAULT_VERSION),
+    version:(sp.get("version")||"acf"),
     book:(sp.get("book")||"jo").toLowerCase(),
     chapter:Number(sp.get("chapter")||3),
     verse:sp.get("verse")?Number(sp.get("verse")):"",
@@ -94,7 +69,7 @@ function syncUrl({version,book,chapter,verse,day,i}){
 // ---------- componente ----------
 export default function Reader(){
   const init=readParams();
-  const [version,setVersion]=React.useState(init.version || DEFAULT_VERSION);
+  const [version,setVersion]=React.useState(init.version || "acf");
   const [abbrev,setAbbrev]=React.useState(init.book);
   const [chapter,setChapter]=React.useState(init.chapter);
   const [number,setNumber]=React.useState(init.verse);
@@ -105,25 +80,16 @@ export default function Reader(){
   const [error,setError]=React.useState("");
   const [data,setData]=React.useState(null);
 
-  // modo imersivo se vier de um dia do plano
-  const planMode = Boolean(day);
-  const seq = React.useMemo(()=> day? seqDoPlano(day): null,[day]);
-
-  // tamanho de fonte (somente modo plano)
-  const [font, setFont] = React.useState(() => {
-    if (typeof localStorage === "undefined") return 20;
-    const v = Number(localStorage.getItem("ifad_font") || 20);
-    return Math.min(Math.max(v, 16), 28);
-  });
-  React.useEffect(()=>{ try{ localStorage.setItem("ifad_font", String(font)); }catch{} }, [font]);
+  const seq=React.useMemo(()=> day? seqDoPlano(day): null,[day]);
 
   React.useEffect(()=>{ syncUrl({version,book:abbrev,chapter,verse:number,day,i:idx}); },[]);
 
   async function fetchAndSet(v=version,b=abbrev,c=chapter,n=number){
     setLoading(true); setError(""); setData(null);
     try {
-      const payload = n? await fetchVerse({version:v,abbrev:b,chapter:c,number:n})
-                       : await fetchChapter({version:v,abbrev:b,chapter:c});
+      const payload = n
+        ? await fetchVerse({version:v,abbrev:b,chapter:c,number:n})
+        : await fetchChapter({version:v,abbrev:b,chapter:c});
       setData(payload);
     } catch(err){
       const msg=String(err?.message||err);
@@ -141,7 +107,7 @@ export default function Reader(){
     const iDay = dayIndex(day);
     if(iDay < 0) return;
 
-    const s = seqDoPlano(day);
+    let s = seqDoPlano(day);
     let next = (idx ?? 0) + delta;
 
     if(next >= 0 && s && next < s.length){
@@ -152,96 +118,39 @@ export default function Reader(){
       return;
     }
     if(next >= (s?.length||0)){
-      // dia concluído
-      markDayDone(day);
-      return;
+      const nextDay = dayByIndex(iDay+1); if(!nextDay) return;
+      const s2 = nextDay.refs.map(parseRef); const r = s2[0];
+      setIdx(0); setAbbrev(r.book); setChapter(r.chapter); setNumber(r.verse||""); setDay(nextDay.id);
+      syncUrl({version,book:r.book,chapter:r.chapter,verse:r.verse||"",day:nextDay.id,i:0});
+      fetchAndSet(version, r.book, r.chapter, r.verse||""); return;
     }
-    // anterior fora do índice? ignora
+    const prevDay = dayByIndex(iDay-1); if(!prevDay) return;
+    const s3 = prevDay.refs.map(parseRef); const last = s3.length-1; const r = s3[last];
+    setIdx(last); setAbbrev(r.book); setChapter(r.chapter); setNumber(r.verse||""); setDay(prevDay.id);
+    syncUrl({version,book:r.book,chapter:r.chapter,verse:r.verse||"",day:prevDay.id,i:last});
+    fetchAndSet(version, r.book, r.chapter, r.verse||"");
   }
 
-  // marca o trecho atual como lido e avança
-  function concluirTrecho(){
+  function concluirDiaEAvançar(){
     if(!day) return;
-    const s = getReadSet(day);
-    const pos = idx ?? 0;
-    s.add(pos);
-    saveReadSet(day, s);
-    // se todos os itens do dia foram lidos, conclui o dia
-    const total = seq?.length || 1;
-    if (s.size >= total) markDayDone(day);
+    try{
+      const raw = localStorage.getItem("ifad_plan_read");
+      const arr = raw ? JSON.parse(raw) : [];
+      const set = new Set(arr); set.add(day);
+      localStorage.setItem("ifad_plan_read", JSON.stringify([...set]));
+      if(typeof window !== "undefined") window.dispatchEvent(new Event("plan:updated"));
+    }catch{}
     goPlan(+1);
   }
 
-  // auto-carregar no modo plano
-  React.useEffect(() => {
-    if (planMode) fetchAndSet();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [planMode]);
-
   async function onSubmit(e){ e.preventDefault(); syncUrl({version,book:abbrev,chapter,verse:number,day,i:idx}); fetchAndSet(); }
 
-  // —————————— RENDER ——————————
-  if (planMode){
-    const progressTxt = `Dia ${String(day).padStart(3,"0")} • ${(idx??0)+1} de ${seq?.length||1}`;
-    const chipBook = data?.book?.name ? `${data.book.name} ${data?.chapter?.number || chapter}` : `${abbrev.toUpperCase()} ${chapter}`;
-    return (
-      <>
-        <div className="focus-top container">
-          <Link className="top-btn" to={`/plano/dia-${day}`} aria-label="Voltar">‹</Link>
-          <div className="chips">
-            <span className="chip">{chipBook}</span>
-            <span className="chip">{version.toUpperCase()}</span>
-          </div>
-          <div className="top-actions" aria-label="Tamanho da fonte">
-            <button onClick={()=>setFont(f=>Math.max(16,f-2))} className="top-btn">A−</button>
-            <button onClick={()=>setFont(f=>Math.min(28,f+2))} className="top-btn">A+</button>
-          </div>
-        </div>
-
-        <main className="container">
-          {error && <p className="alert">{error}</p>}
-
-          {loading && <p className="note">Carregando…</p>}
-
-          {data?.verses && (
-            <article className="reading" style={{ fontSize: `${font}px` }}>
-              <h2 style={{ margin: "8px 0 12px" }}>
-                {data.book?.name} {data.chapter?.number}
-              </h2>
-              <ol className="texto">
-                {data.verses.map(v => (
-                  <li key={v.number}><span className="n">{v.number}</span> {v.text}</li>
-                ))}
-              </ol>
-            </article>
-          )}
-          {data?.text && data?.book && (
-            <article className="reading" style={{ fontSize: `${font}px` }}>
-              <h2 style={{ margin: "8px 0 12px" }}>
-                {data.book?.name} {data.chapter}:{data.number}
-              </h2>
-              <p className="texto"><span className="n">{data.number}</span> {data.text}</p>
-            </article>
-          )}
-        </main>
-
-        <div className="focus-bottom">
-          <div className="container">
-            <div className="progress-mini">{progressTxt}</div>
-            <button className="btn" onClick={concluirTrecho}>Concluir leitura</button>
-          </div>
-        </div>
-      </>
-    );
-  }
-
-  // Modo “livre” (com formulário) — permanece como estava
   return (
-    <>
+    <div className="reader">{/* <<< ativa CSS responsivo desta tela */}
       <h1>Leitura</h1>
 
       <form onSubmit={onSubmit} className="form">
-        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr 1fr",gap:"10px"}}>
+        <div className="controls">{/* <<< em vez de inline grid */}
           <div className="field">
             <label htmlFor="version">Versão</label>
             <VersionSelect id="version" value={version} onChange={setVersion} />
@@ -261,7 +170,21 @@ export default function Reader(){
         </div>
 
         <div className="cta" style={{gap:8,flexWrap:"wrap"}}>
-          <button className="btn" type="submit" disabled={loading}>{loading?"Carregando...":"Ler"}</button>
+          {seq ? (
+            <>
+              <button className="btn outline" type="button" onClick={()=>goPlan(-1)} disabled={loading||(idx??0)<=0}>◀ Anterior (dia)</button>
+              <button className="btn" type="submit" disabled={loading}>{loading?"Carregando...":"Ler"}</button>
+              <button className="btn outline" type="button" onClick={()=>goPlan(1)} disabled={loading}>Próximo (dia) ▶</button>
+              <span className="note">Dia {day} • {(idx??0)+1}/{seq.length}</span>
+              {(idx ?? 0) === (seq.length-1) && (
+                <button className="btn" type="button" onClick={concluirDiaEAvançar}>
+                  Concluir dia e avançar ▶
+                </button>
+              )}
+            </>
+          ) : (
+            <button className="btn" type="submit" disabled={loading}>{loading?"Carregando...":"Ler"}</button>
+          )}
         </div>
       </form>
 
@@ -275,6 +198,6 @@ export default function Reader(){
         <h2>{data.book?.name} {data.chapter}:{data.number} ({version.toUpperCase()})</h2>
         <p className="texto"><span className="n">{data.number}</span> {data.text}</p>
       </>)}
-    </>
+    </div>
   );
 }
