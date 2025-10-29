@@ -308,3 +308,45 @@ html[data-theme="light"] .progress .label{ color:#111; }
 @supports (padding:max(0px)){
   .site-footer{ padding-bottom:max(16px, env(safe-area-inset-bottom)); }
 }
+/* ——— HOTFIX: leitura imersiva (plano) ————————————————— */
+.focus-top{
+  position: sticky; top: 0; z-index: 25;
+  padding: 10px 0; background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 12px;
+}
+.top-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  height:36px; min-width:36px; padding:0 10px;
+  border:1px solid var(--line); border-radius:10px;
+  background:transparent; color:var(--fg); cursor:pointer;
+}
+.chips{ display:flex; gap:8px; flex:1; }
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:999px;
+  border:1px solid var(--line); background:var(--card2);
+  font-weight:800;
+}
+.top-actions{ display:flex; gap:8px; }
+
+.reading{ line-height:1.85; word-break: break-word; }
+.reading h2{ font-size:clamp(1.2rem,1rem + 2vw,1.8rem); margin:8px 0 12px; }
+.reading .texto{ list-style:none; padding:0; margin:0; }
+.reading .texto li{ padding:8px 0; }
+.reading .texto .n{
+  font-variant-numeric: tabular-nums;
+  color:var(--muted); margin-right:8px; font-weight:700;
+}
+
+.focus-bottom{
+  position: sticky; bottom: 0; z-index: 25;
+  background: linear-gradient(180deg, transparent, var(--bg) 40%);
+  padding: 10px 0 14px; border-top: 1px solid var(--line);
+}
+.progress-mini{ text-align:center; color:var(--muted); margin:0 0 8px; }
+
+@media (max-width: 768px){
+  .focus-top{ padding:8px 0; }
+  .focus-bottom .btn{ width:100%; min-height:48px; }
+}
