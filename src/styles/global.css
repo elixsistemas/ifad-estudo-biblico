@@ -200,3 +200,45 @@ html[data-theme="light"] .progress .label{color:#111}
     min-height: 44px;
   }
 }
+/* ===== Plano Anual refinado ===== */
+.plan-hero .muted{ color: var(--muted); margin-top: 4px; }
+
+.plan-tabs{
+  overflow-x:auto; gap:8px; -webkit-overflow-scrolling:touch; scrollbar-width:none;
+}
+.plan-tabs::-webkit-scrollbar{ display:none; }
+
+.weeks{ display:grid; gap:16px; }
+.week{ background: var(--card); border:1px solid var(--line); border-radius:16px; }
+.week__title{
+  font-weight:800; font-size: .95rem; letter-spacing:.3px;
+  border-bottom:1px solid var(--line); padding:10px 14px; color: var(--muted);
+}
+.week__list{ list-style:none; margin:0; padding:8px; display:grid; gap:8px; }
+
+.daycard{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:12px; border:1px solid var(--line); border-radius:12px;
+  background: linear-gradient(180deg, var(--card2), var(--card));
+  position: relative;
+}
+.daycard::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:4px;
+  background:#6b7280; border-top-left-radius:12px; border-bottom-left-radius:12px;
+}
+.daycard.is-done::before{ background:#1e7a3f; }  
+
+.daycard__left{ display:grid; gap:4px; min-width:0; }
+.daycard__num{ font-weight:800; letter-spacing:.3px; }
+.daycard__refs{ color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+.daycard__right{ display:flex; align-items:center; gap:8px; }
+.btn.slim{ padding:8px 12px; border-radius:10px; }
+.chip{ padding:4px 8px; border-radius:999px; border:1px solid var(--line); color:var(--muted); font-size:.8rem; }
+.chip.ok{ background:#163a22; border-color:#1e7a3f; color:#c3f2cd; }
+
+@media (max-width: 768px){
+  .week__list{ gap:10px; }
+  .daycard{ padding:12px; }
+  .daycard__right .btn{ width:auto; }
+}
