@@ -119,16 +119,32 @@ export default function Day({ pageContext }) {
             {dia.refs.map((ref, i) => {
               const done = ticks.has(i);
               return (
-                <li key={i} className={`reading-item ${done ? "is-done" : ""}`}>
-                  <button
-                    className="circle"
-                    aria-pressed={done}
-                    onClick={() => toggleTick(i)}
-                    title={done ? "Desmarcar" : "Marcar como lida"}
-                  />
+                <li
+                  key={i}
+                  className={`reading-item ${done ? "is-done" : ""}`}
+                  onClick={() => toggleTick(i)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      toggleTick(i);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={done}
+                >
+                  <span className="circle" aria-hidden />
                   <span className="reading-text">{ref}</span>
-                  <Link className="go" to={readerHref(i)} aria-label={`Ler ${ref}`}>›</Link>
+                  <Link
+                    className="go"
+                    to={readerHref(i)}
+                    aria-label={`Ler ${ref}`}
+                    onClick={(e) => e.stopPropagation()} // não marcar quando clicar na seta
+                  >
+                    ›
+                  </Link>
                 </li>
+
               );
             })}
           </ul>

@@ -302,3 +302,82 @@ html[data-theme="light"] .progress .label{color:#111}
   .chip-day{ min-width:68px; }
   .reading-item{ padding:12px; }
 }
+/* ===== Modo foco do Dia — ajustes finos ===== */
+.dayfocus .day-hero{
+  display:grid; gap:10px; background:var(--card2);
+  border:1px solid var(--line); border-radius:14px; padding:14px;
+}
+.day-hero__top{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.day-hero h1{
+  font-size: clamp(1.25rem, 1.1rem + 1.5vw, 2rem);
+  line-height: 1.2; margin: 6px 0 2px;
+}
+
+/* chips dos dias */
+.chips-wrap{ margin-top: 2px; }
+.chips-scroll{ display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch; padding:2px 2px 6px; scrollbar-width:none; }
+.chips-scroll::-webkit-scrollbar{ display:none; }
+
+.chip-day{
+  position:relative; display:grid; place-items:center; text-align:center;
+  min-width:64px; padding:8px 10px; border:1px solid var(--line);
+  border-radius:12px; background:var(--card); color:var(--fg);
+}
+.chip-day__num{ font-weight:800; font-size:1.05rem; line-height:1; }
+.chip-day__sub{ color:var(--muted); font-size:.72rem; margin-top:2px; }
+.chip-day.is-current{
+  background:var(--card2);
+  box-shadow: 0 0 0 2px var(--brand) inset;
+  border-color: color-mix(in oklab, var(--brand) 45%, var(--line));
+}
+.chip-day .check{
+  position:absolute; right:6px; top:6px;
+  background:#163a22; color:#c3f2cd; border:1px solid #1e7a3f;
+  border-radius:999px; padding:1px 6px; font-size:.7rem; font-weight:800;
+}
+
+/* lista de leitura */
+.reading{ margin-top:12px; }
+.reading-list{ list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+.reading-item{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:12px;
+  padding:14px; border:1px solid var(--line); border-radius:14px; background:var(--card2);
+  cursor:pointer;
+}
+.reading-item:focus-visible{ outline:2px solid var(--brand); outline-offset:2px; }
+.reading-item .circle{
+  width:24px; height:24px; border-radius:999px; border:2px solid var(--muted);
+  background:transparent; pointer-events:none;
+}
+.reading-item.is-done{ opacity:.9; }
+.reading-item.is-done .circle{ background:#163a22; border-color:#1e7a3f; }
+.reading-text{ font-weight:700; letter-spacing:.2px; }
+.reading-item .go{ font-size:1.35rem; opacity:.9; line-height:1; }
+
+/* navegação de dias */
+.day-actions{ margin:16px 0 88px; }
+.day-actions .side-nav{
+  display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:10px;
+}
+.day-actions .side-nav .btn{
+  min-height:44px; border-radius:12px; font-weight:700;
+}
+
+/* CTA fixo com safe-area e sombra */
+.sticky-cta{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+  background: linear-gradient(180deg, transparent 0%, var(--bg) 30%, var(--bg) 100%);
+  box-shadow: 0 -6px 24px rgba(0,0,0,.18);
+}
+.btn.big{
+  display:block; width:100%; min-height:56px; font-size:1.05rem;
+  border-radius:999px; font-weight:800;
+}
+
+/* Mobile “tight” */
+@media (max-width: 768px){
+  .container{ padding: 18px 14px; }
+  .chip-day{ min-width:60px; }
+  .reading-item{ padding:12px; border-radius:12px; }
+}
