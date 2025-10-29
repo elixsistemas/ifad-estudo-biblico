@@ -4,6 +4,7 @@ const PRESETS = [
   { label: "Fundo neutro", value: "solid" },
   { label: "Fundo 1", value: "/backgrounds/bg1.jpg" },
   { label: "Fundo 2", value: "/backgrounds/bg2.jpg" },
+  { label: "Fundo 3", value: "/backgrounds/bg3.jpg" },
 ];
 
 export default function ImageComposer(){
