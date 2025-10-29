@@ -381,3 +381,38 @@ html[data-theme="light"] .progress .label{color:#111}
   .chip-day{ min-width:60px; }
   .reading-item{ padding:12px; border-radius:12px; }
 }
+/* ----- Day (lista do dia) ----- */
+.readings { list-style: none; padding: 0; display: grid; gap: 10px; }
+
+.reading-row {
+  position: relative;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px 14px;
+}
+
+.reading-row .row-link {
+  position: absolute; inset: 0;
+  border-radius: inherit;
+}
+
+.reading-row .dot {
+  position: relative; z-index: 1;
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 2px solid var(--line);
+  background: transparent;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.reading-row .dot.on {
+  background: #163a22;
+  border-color: #1e7a3f;
+}
+.reading-row .dot.on::after {
+  content: "✓"; font-weight: 800; color: #c3f2cd; font-size: 13px;
+}
+
+.reading-row .label { position: relative; z-index: 1; font-weight: 700; letter-spacing: .2px; }
+.reading-row .chev { position: relative; z-index: 1; margin-left: auto; opacity: .55; font-weight: 900; }

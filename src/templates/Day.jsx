@@ -1,171 +1,124 @@
 import * as React from "react";
 import { Link } from "gatsby";
-import plan from "../../content/plan/plan.json";
 import SiteHeader from "../components/SiteHeader";
 import SEO from "../components/SEO";
 export const Head = ({ location }) => <SEO pathname={location.pathname} />;
 
-// Parse "GN 1:1" -> { book, chapter, verse? }
+const DEFAULT_VERSION = "acf";
+
+// "GN 5" -> { book: "gn", chapter: 5, verse: "" }
 function parseRef(r) {
   const [b, rest] = r.toLowerCase().split(" ");
   const [c, v] = (rest || "").split(":");
   return { book: b, chapter: Number(c || 1), verse: v ? Number(v) : "" };
 }
 
-export default function Day({ pageContext }) {
-  const { id } = pageContext; // passado no gatsby-node
-  const idx = plan.dias.findIndex(d => d.id === id);
-  const dia = plan.dias[idx];
-  const prev = plan.dias[idx - 1];
-  const next = plan.dias[idx + 1];
+// storage por item lido (bolinhas)
+const STORAGE_ITEMS = "ifad_plan_read_items";
+function getReadSet(dayId) {
+  try {
+    const all = JSON.parse(localStorage.getItem(STORAGE_ITEMS) || "{}");
+    return new Set(all[dayId] || []);
+  } catch {
+    return new Set();
+  }
+}
+function saveReadSet(dayId, set) {
+  try {
+    const all = JSON.parse(localStorage.getItem(STORAGE_ITEMS) || "{}");
+    all[dayId] = [...set];
+    localStorage.setItem(STORAGE_ITEMS, JSON.stringify(all));
+  } catch {}
+}
 
-  // checklist por dia: itens lidos (0..n-1)
-  const [ticks, setTicks] = React.useState(new Set());
-  // status do dia no plano
-  const [isDone, setIsDone] = React.useState(false);
+// opcional: marca o dia como concluído quando todos os itens estão lidos
+function markDayDone(dayId) {
+  try {
+    const raw = localStorage.getItem("ifad_plan_read");
+    const arr = raw ? JSON.parse(raw) : [];
+    const set = new Set(arr);
+    set.add(dayId);
+    localStorage.setItem("ifad_plan_read", JSON.stringify([...set]));
+    window.dispatchEvent(new Event("plan:updated"));
+  } catch {}
+}
+
+export default function Day({ pageContext }) {
+  const { id: dayId, refs = [] } = pageContext;
+
+  const [readSet, setReadSet] = React.useState(new Set());
 
   React.useEffect(() => {
-    try {
-      const raw = localStorage.getItem(`ifad_day_${id}`);
-      setTicks(new Set(raw ? JSON.parse(raw) : []));
-    } catch {}
-    try {
-      const raw = localStorage.getItem("ifad_plan_read");
-      const s = new Set(raw ? JSON.parse(raw) : []);
-      setIsDone(s.has(id));
-    } catch {}
-  }, [id]);
+    setReadSet(getReadSet(dayId));
+  }, [dayId]);
 
-  function toggleTick(k) {
-    setTicks(curr => {
-      const n = new Set(curr);
-      n.has(k) ? n.delete(k) : n.add(k);
-      try { localStorage.setItem(`ifad_day_${id}`, JSON.stringify([...n])); } catch {}
-      return n;
+  function toggle(idx) {
+    const s = getReadSet(dayId);
+    if (s.has(idx)) s.delete(idx);
+    else s.add(idx);
+    saveReadSet(dayId, s);
+    setReadSet(new Set(s));
+    if (s.size === refs.length) markDayDone(dayId);
+  }
+
+  function readerUrl(ref, idx) {
+    const { book, chapter, verse } = parseRef(ref);
+    const params = new URLSearchParams({
+      version: DEFAULT_VERSION,
+      book,
+      chapter: String(chapter),
+      day: String(dayId),
+      i: String(idx),
     });
+    if (verse) params.set("verse", String(verse));
+    return `/app/reader?${params.toString()}`;
   }
-
-  function concluirDia() {
-    try {
-      const raw = localStorage.getItem("ifad_plan_read");
-      const s = new Set(raw ? JSON.parse(raw) : []);
-      s.add(id);
-      localStorage.setItem("ifad_plan_read", JSON.stringify([...s]));
-      window.dispatchEvent(new Event("plan:updated"));
-      setIsDone(true);
-    } catch {}
-  }
-
-  function readerHref(i) {
-    const r = parseRef(dia.refs[i]);
-    const q = new URLSearchParams({
-      version: "acf",
-      book: r.book,
-      chapter: String(r.chapter),
-      day: String(id),
-      i: String(i),
-    });
-    if (r.verse) q.set("verse", String(r.verse));
-    return `/app/reader?${q.toString()}`;
-  }
-
-  // chips de navegação: mostra 5 dias ao redor (n-2..n+2)
-  const chips = [];
-  for (let off = -2; off <= 2; off++) {
-    const d = plan.dias[idx + off];
-    if (d) chips.push(d);
-  }
-
-  const total = plan.dias.length;
 
   return (
     <>
       <SiteHeader />
-      <main className="container dayfocus">
-        <header className="day-hero card">
-          <div className="day-hero__top">
-            <div className="breadcrumbs">
-              <Link to="/plano">Plano anual</Link> · Dia {id} de {total}
-            </div>
-            {isDone && <span className="chip ok">Em dia!</span>}
+      <main className="container">
+        <div className="card" style={{ padding: 18, marginBottom: 14 }}>
+          <div className="muted pill" style={{ display: "inline-block" }}>
+            Plano anual • Dia {String(dayId).padStart(3, "0")} de 365
           </div>
+          <h1 style={{ marginTop: 6 }}>Leituras de hoje</h1>
+        </div>
 
-          <h1>Leituras de hoje</h1>
+        <ul className="readings">
+          {refs.map((ref, idx) => {
+            const done = readSet.has(idx);
+            return (
+              <li className="reading-row" key={idx}>
+                {/* link invisível cobrindo toda a linha */}
+                <Link className="row-link" to={readerUrl(ref, idx)} aria-label={`Abrir ${ref}`} />
 
-          {/* chips com dias próximos */}
-          <div className="chips-wrap">
-            <div className="chips-scroll">
-              {chips.map(d => {
-                const current = d.id === id;
-                return (
-                  <Link
-                    key={d.id}
-                    to={`/plano/dia-${d.id}`}
-                    className={`chip-day ${current ? "is-current" : ""}`}
-                  >
-                    <div className="chip-day__num">{d.id}</div>
-                    <div className="chip-day__sub">dia</div>
-                    {current && <div className="check">✓</div>}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        </header>
-
-        {/* lista de passagens do dia */}
-        <section className="reading card">
-          <ul className="reading-list">
-            {dia.refs.map((ref, i) => {
-              const done = ticks.has(i);
-              return (
-                <li
-                  key={i}
-                  className={`reading-item ${done ? "is-done" : ""}`}
-                  onClick={() => toggleTick(i)}
+                {/* bolinha: só ela marca/desmarca; não navega */}
+                <button
+                  type="button"
+                  className={`dot ${done ? "on" : ""}`}
+                  aria-label={done ? `Desmarcar ${ref}` : `Marcar ${ref} como lido`}
+                  aria-pressed={done}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggle(idx);
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
                       e.preventDefault();
-                      toggleTick(i);
+                      e.stopPropagation();
+                      toggle(idx);
                     }
                   }}
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={done}
-                >
-                  <span className="circle" aria-hidden />
-                  <span className="reading-text">{ref}</span>
-                  <Link
-                    className="go"
-                    to={readerHref(i)}
-                    aria-label={`Ler ${ref}`}
-                    onClick={(e) => e.stopPropagation()} // não marcar quando clicar na seta
-                  >
-                    ›
-                  </Link>
-                </li>
+                />
 
-              );
-            })}
-          </ul>
-        </section>
-
-        {/* navegação de dias + CTA */}
-        <nav className="day-actions">
-          <div className="side-nav">
-            {prev ? <Link className="btn outline" to={`/plano/dia-${prev.id}`}>◀ Dia {prev.id}</Link> : <span />}
-            {next ? <Link className="btn outline" to={`/plano/dia-${next.id}`}>Dia {next.id} ▶</Link> : <span />}
-          </div>
-
-          <div className="sticky-cta">
-            {!isDone ? (
-              <button className="btn big" onClick={concluirDia}>Concluir dia</button>
-            ) : (
-              next ? <Link className="btn big" to={`/plano/dia-${next.id}`}>Começar a leitura do próximo</Link>
-                   : <Link className="btn big" to="/plano">Ver resumo do plano</Link>
-            )}
-          </div>
-        </nav>
+                <span className="label">{ref}</span>
+                <span className="chev" aria-hidden>›</span>
+              </li>
+            );
+          })}
+        </ul>
       </main>
     </>
   );

@@ -89,7 +89,16 @@ export default function Reader(){
 
   const seq = React.useMemo(()=> day ? seqDoPlano(day) : null, [day]);
 
-  React.useEffect(()=>{ syncUrl({version,book:abbrev,chapter,verse:number,day,i:idx}); },[]);
+  React.useEffect(() => {
+  // se veio com parâmetros (book/day), já carrega
+  if (typeof window !== "undefined") {
+    const sp = new URLSearchParams(window.location.search);
+    if (sp.get("book") || sp.get("day")) {
+      fetchAndSet(); // usa version/abbrev/chapter/number atuais
+    }
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
   async function fetchAndSet(v=version,b=abbrev,c=chapter,n=number){
     setLoading(true); setError(""); setData(null);
