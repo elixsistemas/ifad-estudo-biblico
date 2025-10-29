@@ -308,3 +308,74 @@ html[data-theme="light"] .progress .label{ color:#111; }
 @supports (padding:max(0px)){
   .site-footer{ padding-bottom:max(16px, env(safe-area-inset-bottom)); }
 }
+/* =========================
+   1) Leitor "livre" (form) — responsivo
+   Não toca no modo imersivo (que não renderiza esse form).
+   ========================= */
+@media (max-width: 1024px){
+  /* pega o grid inline do form e força 2 colunas no tablet */
+  .form > div[style*="grid-template-columns"]{
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+@media (max-width: 768px){
+  /* 1 coluna no mobile */
+  .form > div[style*="grid-template-columns"]{
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+  .form select,
+  .form input,
+  .form textarea{
+    font-size: 16px;        /* evita zoom no iOS */
+    min-height: 44px;
+  }
+  .form .btn{
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+/* =========================
+   2) Leitor imersivo — garantias de estilo (escopo claro)
+   Mantém tipografia e sticks sem brigar com o resto.
+   ========================= */
+.focus-top{
+  position: sticky; top: 0; z-index: 25;
+  padding: 10px 0;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  display: flex; align-items: center; gap: 12px;
+}
+.top-btn{
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 36px; min-width: 36px; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: 10px;
+  background: transparent; color: var(--fg); cursor: pointer;
+}
+.chips{ display:flex; gap:8px; flex:1; min-width: 0; }
+.chip{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 10px; border-radius:999px;
+  border:1px solid var(--line); background:var(--card2);
+  font-weight:800; white-space: nowrap;
+}
+
+.reading{ line-height: 1.9; }
+.reading .texto{ margin: 0; padding-left: 1.25rem; }
+.reading .texto li{ margin-bottom: 6px; }
+.reading .n{ color: var(--muted); margin-right: 6px; font-weight: 600; }
+
+.focus-bottom{
+  position: sticky; bottom: 0; z-index: 25;
+  background: linear-gradient(180deg, transparent, var(--bg) 40%);
+  padding: 10px 0 14px; border-top: 1px solid var(--line);
+}
+.progress-mini{ text-align:center; color: var(--muted); margin: 0 0 8px; }
+
+/* safe-area para iPhone */
+@supports (padding: max(0px)){
+  .focus-bottom{ padding-bottom: max(14px, env(safe-area-inset-bottom)); }
+}
