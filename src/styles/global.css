@@ -62,3 +62,90 @@ html[data-theme="light"] .progress .label{color:#111}
 .form .field { margin-bottom: .875rem; }
 .form .field > label { display:block; font-weight:600; margin-bottom:.25rem; }
 .form .field > input, .form .field > textarea { width:100%; }
+
+@media (max-width: 768px){
+  .container{ padding: 16px 14px; }
+  .header{ padding: 8px 0; }
+  .header img{ height: 40px; }
+  .header .brand strong{
+    font-size: clamp(1rem, 2.6vw, 1.25rem);
+    letter-spacing: .1px;
+  }
+
+  .btn{ min-height: 44px; width: 100%; }
+  input, select, textarea{ font-size: 16px; }
+  .form{ gap: 10px; }
+  .card{ margin: 10px 0; }
+
+
+  ul.days li{ padding: 12px; border-radius: 10px; }
+  .results{ gap: 10px; }
+}
+
+.nav-toggle{
+  display: none;
+}
+
+@media (max-width: 768px){
+  .nav-toggle{
+    display: inline-flex;
+    margin-left: auto;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--fg);
+    padding: 8px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .header .right{
+    position: fixed;
+    left: 0; right: 0;
+    top: 64px; 
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    transform: translateY(-120%);
+    transition: transform .25s ease;
+    padding: 12px 16px 16px;
+    display: grid;
+    gap: 10px;
+    z-index: 25;
+  }
+  .header .right.is-open{
+    transform: translateY(0);
+  }
+
+  /* Opcional: tema dentro do menu no mobile */
+  .theme-switch{ width: 100%; text-align: center; }
+}
+
+@media (min-width: 769px){
+  .header .right{
+    position: static;
+    transform: none;
+    display: flex;
+    gap: 12px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+  }
+  .nav-toggle{ display: none; }
+}
+
+/* Canvas do gerador responsivo e nítido */
+@media (max-width: 480px){
+  canvas{ width: 100% !important; height: auto !important; }
+  .note{ font-size: .95rem; }
+}
+
+/* Barra de progresso legível em telas pequenas */
+@media (max-width: 480px){
+  .progress{ height: 18px; }
+  .progress .label{ font-size: .8rem; line-height: 18px; }
+}
+
+@supports (padding: max(0px)){
+  .site-footer{ padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+}

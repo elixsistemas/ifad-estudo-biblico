@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import logo from "../images/logo.png";
 
 export default function SiteHeader() {
+  const [menuOpen, setMenuOpen] = React.useState(false);
   const [theme, setTheme] = React.useState(
     typeof document !== "undefined"
       ? document.documentElement.getAttribute("data-theme") || "dark"
@@ -25,20 +26,33 @@ export default function SiteHeader() {
 
   return (
     <header className="header">
-      <div className="container" style={{display:"flex",alignItems:"center",gap:12}}>
-        <Link to="/" className="brand" style={{display:"inline-flex",alignItems:"center",gap:10}}>
+      <div className="container" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <Link to="/" className="brand" style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
           <img src={logo} alt="IFAD" />
           <strong>Estudo Bíblico IFAD</strong>
         </Link>
-        <nav className="right">
-          <Link to="/plano">Plano Anual</Link>
-          <Link to="/app/reader">Leitura</Link>
-          <Link to="/app/busca">Busca</Link>
-          <Link to="/criar-imagem">Criar imagem</Link>
-          <Link to="/pedido-oracao">Pedido de Oração</Link>
-          <Link to="/contato">Contato</Link>
-          <button className="theme-switch" onClick={() => setTheme(t=>t==="dark"?"light":"dark")}>
-            {theme==="dark" ? "🌙 Escuro" : "☀️ Claro"}
+
+        {/* botão só visível no mobile via CSS */}
+        <button
+          className="nav-toggle"
+          aria-expanded={menuOpen}
+          aria-controls="main-nav"
+          onClick={() => setMenuOpen(v => !v)}
+        >
+          ☰ Menu
+        </button>
+
+        <nav id="main-nav" className={`right${menuOpen ? " is-open" : ""}`}>
+          <Link to="/plano" onClick={() => setMenuOpen(false)}>Plano Anual</Link>
+          <Link to="/app/reader" onClick={() => setMenuOpen(false)}>Leitura</Link>
+          <Link to="/app/busca" onClick={() => setMenuOpen(false)}>Busca</Link>
+          <Link to="/pedido-oracao" onClick={() => setMenuOpen(false)}>Pedido de Oração</Link>
+          <Link to="/contato" onClick={() => setMenuOpen(false)}>Contato</Link>
+          <button
+            className="theme-switch"
+            onClick={() => setTheme(t => (t === "dark" ? "light" : "dark"))}
+          >
+            {theme === "dark" ? "🌙 Escuro" : "☀️ Claro"}
           </button>
         </nav>
       </div>
