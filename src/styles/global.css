@@ -117,7 +117,6 @@ html[data-theme="light"] .progress .label{color:#111}
     transform: translateY(0);
   }
 
-  /* Opcional: tema dentro do menu no mobile */
   .theme-switch{ width: 100%; text-align: center; }
 }
 
@@ -134,13 +133,11 @@ html[data-theme="light"] .progress .label{color:#111}
   .nav-toggle{ display: none; }
 }
 
-/* Canvas do gerador responsivo e nítido */
 @media (max-width: 480px){
   canvas{ width: 100% !important; height: auto !important; }
   .note{ font-size: .95rem; }
 }
 
-/* Barra de progresso legível em telas pequenas */
 @media (max-width: 480px){
   .progress{ height: 18px; }
   .progress .label{ font-size: .8rem; line-height: 18px; }
@@ -148,4 +145,58 @@ html[data-theme="light"] .progress .label{color:#111}
 
 @supports (padding: max(0px)){
   .site-footer{ padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+}
+
+.reader .controls{
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 12px;
+  align-items: end;
+}
+.reader .controls .field > *{ width: 100%; }
+
+@media (max-width: 1024px){
+  .reader .controls{ grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 768px){
+  .reader .controls{ grid-template-columns: 1fr; }
+  .reader h1{ margin: 8px 0 6px; }
+}
+
+.reader .action{ margin-top: 8px; }
+@media (max-width: 768px){
+  .reader .action .btn{ width: 100%; min-height: 44px; }
+  .reader .cta{ gap: 10px; flex-wrap: wrap; }
+}
+
+.reader .panel{
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin-top: 12px;
+}
+
+.reader .tabs-wrap{
+  position: sticky;
+  top: 64px;
+  z-index: 20;
+  background: var(--bg);
+  padding-top: 4px;
+}
+.reader nav.tabs{
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 8px;
+  scrollbar-width: none;
+}
+.reader nav.tabs::-webkit-scrollbar{ display: none; }
+
+@media (max-width: 768px){
+  .reader select,
+  .reader input,
+  .reader textarea{
+    font-size: 16px;
+    min-height: 44px;
+  }
 }

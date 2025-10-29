@@ -46,6 +46,7 @@ export default function SiteHeader() {
           <Link to="/plano" onClick={() => setMenuOpen(false)}>Plano Anual</Link>
           <Link to="/app/reader" onClick={() => setMenuOpen(false)}>Leitura</Link>
           <Link to="/app/busca" onClick={() => setMenuOpen(false)}>Busca</Link>
+          <Link to="/criar-imagem" onClick={() => setMenuOpen(false)}>Criar Imagem</Link>
           <Link to="/pedido-oracao" onClick={() => setMenuOpen(false)}>Pedido de Oração</Link>
           <Link to="/contato" onClick={() => setMenuOpen(false)}>Contato</Link>
           <button
