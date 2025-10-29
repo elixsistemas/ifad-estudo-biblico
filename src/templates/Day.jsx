@@ -1,85 +1,155 @@
 import * as React from "react";
 import { Link } from "gatsby";
-import SiteHeader from "../components/SiteHeader";
 import plan from "../../content/plan/plan.json";
+import SiteHeader from "../components/SiteHeader";
+import SEO from "../components/SEO";
+export const Head = ({ location }) => <SEO pathname={location.pathname} />;
 
-function toQueryFromRef(r, dayId, index) {
-  const clean = r.trim().toLowerCase().replace(/\s+/g, " ");
-  const [livro, resto] = clean.split(" ");
-  const [cap, vers] = (resto || "").split(":");
-  const p = new URLSearchParams({ version:"acf", book:livro, chapter:cap||"1", day:dayId, i:String(index) });
-  if (vers) p.set("verse", vers);
-  return `/app/reader?${p.toString()}`;
+// Parse "GN 1:1" -> { book, chapter, verse? }
+function parseRef(r) {
+  const [b, rest] = r.toLowerCase().split(" ");
+  const [c, v] = (rest || "").split(":");
+  return { book: b, chapter: Number(c || 1), verse: v ? Number(v) : "" };
 }
 
-function getSiblings(dayId){
-  const i = plan.dias.findIndex(d => d.id === dayId);
-  return {
-    prev: i>0 ? plan.dias[i-1].id : null,
-    next: i<plan.dias.length-1 ? plan.dias[i+1].id : null,
-  };
-}
+export default function Day({ pageContext }) {
+  const { id } = pageContext; // passado no gatsby-node
+  const idx = plan.dias.findIndex(d => d.id === id);
+  const dia = plan.dias[idx];
+  const prev = plan.dias[idx - 1];
+  const next = plan.dias[idx + 1];
 
-export default function Day({ pageContext: { id, refs, titulo } }) {
-  const first = refs[0];
-  const [lido, setLido] = React.useState(false);
-  const sib = getSiblings(id);
+  // checklist por dia: itens lidos (0..n-1)
+  const [ticks, setTicks] = React.useState(new Set());
+  // status do dia no plano
+  const [isDone, setIsDone] = React.useState(false);
 
   React.useEffect(() => {
     try {
-      const raw = localStorage.getItem("ifad_plan_read");
-      const set = raw ? new Set(JSON.parse(raw)) : new Set();
-      setLido(set.has(id));
-    } catch { setLido(false); }
-  }, [id]);
-
-  function toggleLido() {
+      const raw = localStorage.getItem(`ifad_day_${id}`);
+      setTicks(new Set(raw ? JSON.parse(raw) : []));
+    } catch {}
     try {
       const raw = localStorage.getItem("ifad_plan_read");
-      const arr = raw ? JSON.parse(raw) : [];
-      const set = new Set(arr);
-      if (set.has(id)) set.delete(id); else set.add(id);
-      localStorage.setItem("ifad_plan_read", JSON.stringify([...set]));
-      setLido(set.has(id));
-      if (typeof window !== "undefined") window.dispatchEvent(new Event("plan:updated"));
+      const s = new Set(raw ? JSON.parse(raw) : []);
+      setIsDone(s.has(id));
+    } catch {}
+  }, [id]);
+
+  function toggleTick(k) {
+    setTicks(curr => {
+      const n = new Set(curr);
+      n.has(k) ? n.delete(k) : n.add(k);
+      try { localStorage.setItem(`ifad_day_${id}`, JSON.stringify([...n])); } catch {}
+      return n;
+    });
+  }
+
+  function concluirDia() {
+    try {
+      const raw = localStorage.getItem("ifad_plan_read");
+      const s = new Set(raw ? JSON.parse(raw) : []);
+      s.add(id);
+      localStorage.setItem("ifad_plan_read", JSON.stringify([...s]));
+      window.dispatchEvent(new Event("plan:updated"));
+      setIsDone(true);
     } catch {}
   }
 
-  function concluirEDepoisIr(){
-    toggleLido();
-    if (sib.next && typeof window !== "undefined") {
-      window.location.assign(`/plano/dia-${sib.next}`);
-    }
+  function readerHref(i) {
+    const r = parseRef(dia.refs[i]);
+    const q = new URLSearchParams({
+      version: "acf",
+      book: r.book,
+      chapter: String(r.chapter),
+      day: String(id),
+      i: String(i),
+    });
+    if (r.verse) q.set("verse", String(r.verse));
+    return `/app/reader?${q.toString()}`;
   }
+
+  // chips de navegação: mostra 5 dias ao redor (n-2..n+2)
+  const chips = [];
+  for (let off = -2; off <= 2; off++) {
+    const d = plan.dias[idx + off];
+    if (d) chips.push(d);
+  }
+
+  const total = plan.dias.length;
 
   return (
     <>
       <SiteHeader />
-      <main className="container">
-        <nav className="breadcrumbs">
-          <Link to="/plano">{(titulo || "Plano Anual").replace("(AT+NT diário)","")}</Link> <span>›</span> <strong>Dia {id}</strong>
+      <main className="container dayfocus">
+        <header className="day-hero card">
+          <div className="day-hero__top">
+            <div className="breadcrumbs">
+              <Link to="/plano">Plano anual</Link> · Dia {id} de {total}
+            </div>
+            {isDone && <span className="chip ok">Em dia!</span>}
+          </div>
+
+          <h1>Leituras de hoje</h1>
+
+          {/* chips com dias próximos */}
+          <div className="chips-wrap">
+            <div className="chips-scroll">
+              {chips.map(d => {
+                const current = d.id === id;
+                return (
+                  <Link
+                    key={d.id}
+                    to={`/plano/dia-${d.id}`}
+                    className={`chip-day ${current ? "is-current" : ""}`}
+                  >
+                    <div className="chip-day__num">{d.id}</div>
+                    <div className="chip-day__sub">dia</div>
+                    {current && <div className="check">✓</div>}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </header>
+
+        {/* lista de passagens do dia */}
+        <section className="reading card">
+          <ul className="reading-list">
+            {dia.refs.map((ref, i) => {
+              const done = ticks.has(i);
+              return (
+                <li key={i} className={`reading-item ${done ? "is-done" : ""}`}>
+                  <button
+                    className="circle"
+                    aria-pressed={done}
+                    onClick={() => toggleTick(i)}
+                    title={done ? "Desmarcar" : "Marcar como lida"}
+                  />
+                  <span className="reading-text">{ref}</span>
+                  <Link className="go" to={readerHref(i)} aria-label={`Ler ${ref}`}>›</Link>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        {/* navegação de dias + CTA */}
+        <nav className="day-actions">
+          <div className="side-nav">
+            {prev ? <Link className="btn outline" to={`/plano/dia-${prev.id}`}>◀ Dia {prev.id}</Link> : <span />}
+            {next ? <Link className="btn outline" to={`/plano/dia-${next.id}`}>Dia {next.id} ▶</Link> : <span />}
+          </div>
+
+          <div className="sticky-cta">
+            {!isDone ? (
+              <button className="btn big" onClick={concluirDia}>Concluir dia</button>
+            ) : (
+              next ? <Link className="btn big" to={`/plano/dia-${next.id}`}>Começar a leitura do próximo</Link>
+                   : <Link className="btn big" to="/plano">Ver resumo do plano</Link>
+            )}
+          </div>
         </nav>
-
-        <h1>Dia {id}</h1>
-        <p><strong>Referências:</strong> {refs.join(", ")}</p>
-
-        <div className="cta" style={{gap:12,flexWrap:"wrap"}}>
-          <Link className="btn" to={toQueryFromRef(first, id, 0)}>Ler agora</Link>
-          {refs.map((r, idx) => (
-            <Link key={r} className="btn outline" to={toQueryFromRef(r, id, idx)}>Abrir {r}</Link>
-          ))}
-          {sib.prev && <Link className="btn outline" to={`/plano/dia-${sib.prev}`}>◀ Dia {sib.prev}</Link>}
-          {sib.next && <Link className="btn outline" to={`/plano/dia-${sib.next}`}>Dia {sib.next} ▶</Link>}
-
-          <button className={`btn ${lido ? "" : "outline"}`} onClick={toggleLido}>
-            {lido ? "✓ Marcado como lido" : "Marcar como lido"}
-          </button>
-          {sib.next && (
-            <button className="btn" onClick={concluirEDepoisIr}>
-              Concluir dia e ir para o próximo ▶
-            </button>
-          )}
-        </div>
       </main>
     </>
   );

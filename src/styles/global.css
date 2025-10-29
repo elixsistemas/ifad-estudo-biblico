@@ -242,3 +242,63 @@ html[data-theme="light"] .progress .label{color:#111}
   .daycard{ padding:12px; }
   .daycard__right .btn{ width:auto; }
 }
+/* ===== Modo foco do Dia ===== */
+.dayfocus .day-hero{
+  display:grid; gap:10px;
+}
+.day-hero__top{
+  display:flex; align-items:center; gap:8px; justify-content:space-between;
+}
+.chips-wrap{ margin-top: 6px; }
+.chips-scroll{
+  display:flex; gap:10px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  padding-bottom: 4px; scrollbar-width: none;
+}
+.chips-scroll::-webkit-scrollbar{ display:none; }
+
+.chip-day{
+  position:relative;
+  display:grid; place-items:center;
+  min-width:76px; padding:8px 10px; border:1px solid var(--line);
+  border-radius:12px; background:var(--card2); color:var(--fg); text-align:center;
+}
+.chip-day__num{ font-weight:800; font-size:1.1rem; line-height:1; }
+.chip-day__sub{ color:var(--muted); font-size:.75rem; }
+.chip-day.is-current{ outline:2px solid var(--brand); }
+.chip-day .check{
+  position:absolute; right:8px; top:8px; font-weight:800;
+  background:#163a22; color:#c3f2cd; border:1px solid #1e7a3f;
+  border-radius:999px; padding:1px 6px; font-size:.75rem;
+}
+
+.reading{ margin-top:12px; }
+.reading-list{ list-style:none; padding:0; margin:0; display:grid; gap:8px; }
+.reading-item{
+  display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:10px;
+  padding:12px; border:1px solid var(--line); border-radius:12px; background:var(--card);
+}
+.reading-item.is-done{ opacity:.75; }
+.reading-item .circle{
+  width:22px; height:22px; border-radius:999px; border:2px solid var(--muted);
+  background:transparent; cursor:pointer;
+}
+.reading-item.is-done .circle{
+  background:#163a22; border-color:#1e7a3f;
+}
+.reading-item .go{ font-size:1.4rem; opacity:.9; }
+
+.day-actions{ margin:16px 0 80px; }
+.day-actions .side-nav{ display:flex; justify-content:space-between; margin-bottom:12px; }
+.sticky-cta{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  padding:10px 14px; background: linear-gradient(0deg, var(--bg) 60%, transparent);
+}
+.btn.big{
+  display:block; width:100%; min-height:52px; font-size:1.05rem; border-radius:999px;
+}
+
+/* Mobile refinado */
+@media (max-width:768px){
+  .chip-day{ min-width:68px; }
+  .reading-item{ padding:12px; }
+}
