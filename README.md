@@ -1,213 +1,190 @@
 Estudo Bíblico IFAD — Jamstack (Gatsby)
 
-Aplicação de leitura bíblica e plano anual da IFAD, construída com Gatsby (Jamstack) combinando SSG (Static Site Generation) e SPA (Single Page Application) para uma experiência rápida, moderna e confiável — com progresso diário, leitor integrado, busca resiliente, e formulários de Pedido de Oração e Contato.
+Aplicação de leitura bíblica e plano anual construída em Gatsby 5 (Jamstack), combinando SSG (Static Site Generation) e SPA (client-only) para entregar velocidade, resiliência e UX caprichada.
+Inclui leitor integrado, plano anual com progresso, busca robusta com fallback, e formulários de Pedido de Oração e Contato prontos para Netlify Forms.
+
+Demo (CDN): https://ifad-estudo-biblico.netlify.app/
+
+Repositório: https://github.com/elixsistemas/ifad-estudo-biblico
 
 ✨ Principais recursos
 
-SSG + SPA (lado a lado)
+SSG + SPA lado a lado
 
-Páginas do Plano são estáticas (SSG) para velocidade e SEO.
+Páginas do plano geradas estaticamente: /plano e /plano/dia-XYZ (SEO e velocidade).
 
-Área /app é SPA client-only (Leitura e Busca), garantindo interatividade dinâmica.
-
-Leitor inteligente
-
-Dropdowns para Versão, Livro, Capítulo e Verso (evita erros de digitação).
-
-Botões Anterior/Próximo que atravessam dias do plano.
-
-Botão Concluir dia e avançar (marca como lido e abre o próximo dia).
-
-Fallback automático para fonte pública quando a API principal estiver indisponível.
+Área /app/* é SPA client-only para leitura e busca dinâmicas.
 
 Plano anual com progresso
 
-365 dias (AT+NT diário), com badge “pendente/✓ lido” e barra de progresso.
+365 dias (AT+NT diário), badges pendente / ✓ lido, barra de progresso e sincronização entre abas.
 
-Estado persistente via localStorage e sincronização entre abas/rotas.
+Estados persistidos via localStorage (ifad_plan_read, ifad_plan_read_items).
 
-Formulários
+Leitor inteligente
 
-Pedido de Oração e Contato, prontos para Netlify Forms (ou outro backend).
+Versão / Livro / Capítulo / Verso com selects guiados (evitam erro de digitação).
+
+Navegação Anterior/Próximo atravessando itens do dia; Concluir leitura marca e avança.
+
+Modo imersivo quando aberto pelo plano, com A−/A+ e fonte persistente.
+
+Fallback automático para bible-api.com se a API principal falhar (mensagens claras).
 
 Busca resiliente
 
-Lida com variações de payload (q/query/search) e com/remova acentos.
+Tenta múltiplos formatos de payload (q/query/search), remove acentos e lida com variações de resposta.
 
-Tema Claro/Escuro, acessibilidade básica (foco visível, labels htmlFor/id), layout responsivo.
+Formulários
 
-🏗️ Arquitetura
+Pedido de Oração e Contato preparados para Netlify Forms, com validação básica e layout responsivo.
+
+Acessibilidade e tema
+
+Tema Claro/Escuro, foco visível, labels com htmlFor/id, contraste verificado e UI responsiva.
+
+🏗️ Arquitetura (Jamstack)
 
 Gatsby 5 (React 18)
 
-Páginas SSG
+SSG
 
 /plano (lista e progresso)
 
-/plano/dia-XYZ (detalhe de cada dia)
+/plano/dia-XYZ (detalhe por dia; 365 páginas geradas via gatsby-node.js)
 
-Rotas Client-Only (SPA)
+SPA Client-Only
 
-/app/reader (Leitor)
+/app/reader (Leitura)
 
 /app/busca (Busca)
 
-Integrações
+CDN: Netlify (build + deploy via CI/CD)
 
-API: https://www.abibliadigital.com.br (token JWT)
-
-Fallback: https://bible-api.com/ (somente leitura)
-
-Estrutura de pastas (simplificada)
+🗂️ Estrutura de pastas (resumo)
 content/
-  plan/plan.json          # dias e referências (AT+NT diário)
+  plan/plan.json          # dias e referências do plano (AT+NT diário)
+
 src/
-  components/             # Header, selects, etc.
+  components/             # SiteHeader, SEO, selects, etc.
   pages/
     index.jsx             # home
     plano.jsx             # lista do plano (SSG)
-    pedido-oracao.jsx     # form
-    contato.jsx           # form
-    app/index.jsx         # router SPA (/app/*)
+    pedido-oracao.jsx     # form (Netlify Forms)
+    contato.jsx           # form (Netlify Forms)
+    app/
+      index.jsx           # router client-only para /app/*
   spa/
-    Reader.jsx            # leitor (SPA)
+    Reader.jsx            # leitor (SPA, com modo imersivo)
     Busca.jsx             # busca (SPA)
+    ImageComposer.jsx     # util opcional
   styles/global.css
   templates/
     Day.jsx               # página do dia (SSG)
+
 gatsby-node.js            # gera /plano/dia-XYZ e marca /app/* como client-only
-
-✅ Requisitos
-
-Node.js LTS recomendada: 18.x ou 20.x
-(Node 22 pode funcionar, mas muitas libs do ecossistema Gatsby ainda recomendam 18/20.)
-
-npm 8+ (ou pnpm/yarn se preferir)
-
-Token da API A Bíblia Digital (veja abaixo)
+gatsby-config.js          # plugins (image, sitemap, robots, mdx etc.)
 
 🔐 Ambiente (.env)
 
-Crie /.env.development e/ou /.env.production com:
+Crie /.env.development e/ou /.env.production:
 
-GATSBY_BIBLIA_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9....   # seu JWT
-
-
-Gatsby expõe variáveis que começam com GATSBY_ ao cliente. Não coloque segredos sensíveis sem esse prefixo na build do front-end.
-
-🔑 Gerando o token (A Bíblia Digital)
-
-Criar usuário (exemplo em PowerShell):
-
-$body = @{
-  name          = "Seu Nome"
-  email         = "voce@exemplo.com"
-  password      = "SuaSenhaForte123!"
-  notifications = $true
-} | ConvertTo-Json
-
-Invoke-RestMethod -Method Post `
-  -Uri "https://www.abibliadigital.com.br/api/users" `
-  -ContentType "application/json" `
-  -Body $body
+GATSBY_BIBLIA_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...   # seu JWT
 
 
-Resposta inclui token. Guarde-o.
+Gatsby expõe variáveis que começam com GATSBY_ ao cliente. Não coloque segredos sensíveis sem esse prefixo.
 
-(Opcional) Redefinir/atualizar token:
+Como obter o token (A Bíblia Digital)
 
-$auth = @{ email="voce@exemplo.com"; password="SuaSenhaForte123!" } | ConvertTo-Json
-$resp = Invoke-RestMethod -Method Put `
-  -Uri "https://www.abibliadigital.com.br/api/users/token" `
-  -ContentType "application/json" `
-  -Body $auth
-$resp.token  # novo JWT
-
-
-Testar:
+Cadastre-se em https://www.abibliadigital.com.br/ e gere seu token. Teste com:
 
 $h = @{ Authorization = "Bearer SEU_TOKEN"; Accept="application/json" }
 Invoke-RestMethod -Method Get -Uri "https://www.abibliadigital.com.br/api/check" -Headers $h
 
 
-Taxas: a API possui limites/ratelimit. Evite loops agressivos de busca.
+A aplicação faz fallback de leitura para https://bible-api.com/ se necessário.
 
 ▶️ Rodando localmente
 npm install
 npm run develop
-# abre em http://localhost:8000
+# http://localhost:8000
 
 
 Build de produção:
 
 npm run build
-npm run serve   # serve o /public
+npm run serve
 
-🚀 Deploy
+🚀 Deploy (CDN + CI/CD)
+Netlify (recomendado)
 
-Netlify (recomendado): arraste a pasta /public (build) ou conecte o repositório.
-Configure GATSBY_BIBLIA_TOKEN nas Environment Variables do projeto.
-Forms (pedido-oracao, contato) já prontos para Netlify Forms.
+Conecte o repositório (GitHub): https://github.com/elixsistemas/ifad-estudo-biblico
 
-Vercel: funciona bem (SSG). Rotas client-only já configuradas em gatsby-node.js.
+Site em produção: https://ifad-estudo-biblico.netlify.app/
+
+Configure GATSBY_BIBLIA_TOKEN nas Environment Variables (Site Settings → Build & deploy → Environment).
+
+Pipeline CI/CD (Fluxo exigido)
+
+Commit no GitHub → Netlify dispara build.
+
+Build OK → Deploy automático para a CDN.
+
+Site atualizado em: https://ifad-estudo-biblico.netlify.app/
+
+Adicionar o usuário do professor como colaborador no GitHub para que ele possa commitar e disparar a pipeline.
 
 🧩 Como funciona (SSG + SPA)
 
-SSG (Plano): gatsby-node.js lê content/plan/plan.json e gera 365 páginas /plano/dia-XYZ.
-Progresso é salvo em localStorage (ifad_plan_read) e sincronizado por eventos (plan:updated).
+SSG (Plano): gatsby-node.js lê content/plan/plan.json e gera /plano/dia-XYZ.
+Progresso do plano salvo em localStorage (ifad_plan_read) e sincronizado com plan:updated.
 
-SPA (/app): o Leitor e a Busca vivem em /app/* com @gatsbyjs/reach-router.
+SPA (/app): Leitor e Busca em /app/* (client-only), mantendo estado no navegador.
+O Leitor sincroniza a URL com ?version,book,chapter,verse,day,i, possui modo imersivo, A−/A+ e Concluir leitura que marca e avança.
 
-O Leitor consome a API com Bearer (do .env), faz fallback quando necessário, e sincroniza a URL (?version&book&chapter&verse&day&i), permitindo compartilhar links.
+🧪 QA / Acessibilidade (checklist)
 
-Navegação Anterior/Próximo respeita a sequência do dia e atravessa dias quando chega ao início/fim.
+ Foco visível; navegação por teclado.
 
-🧪 Checklist de QA / Acessibilidade
+ label htmlFor pareado com id.
 
- Navegação por teclado (foco visível).
+ Contraste ok em Claro/Escuro.
 
- Labels associados (htmlFor/id) em todos os inputs.
+ Leitor imersivo pelo plano; Anterior/Próximo respeita a sequência.
 
- Contraste OK em tema claro/escuro.
+ Concluir marca ✓ e avança; fim do dia dispara sincronização.
 
- Leitor abre pelo plano e Próx./Ant. transita entre refs do dia (e atravessa dias).
+ Busca trata acentos/payloads, com mensagens claras.
 
- Concluir dia marca ✓ e avança.
+ Forms com validação básica e compatíveis com Netlify Forms.
 
- Busca retorna itens (ou mensagem útil). Testar termo com/sem acentos.
+ Responsivo (mobile-first), inclusive controles do leitor.
 
- Forms enviam (Netlify) e mostram validação básica.
+🖼️ Imagens, SEO e Metadados
 
-🛠️ Problemas comuns (Troubleshooting)
+gatsby-plugin-image / sharp para otimização (quando houver imagens na rota).
 
-HTTP 403/401 na API
-Token ausente/expirado. Confirme GATSBY_BIBLIA_TOKEN no .env e rebuild. Teste /api/check.
+SEO.jsx define title, description e image via Head.
 
-HTTP 500 na Busca
-A rota verses/search pode ser sensível a payload/acentos. A Busca já tenta várias formas (q, query, search) e remove acentos. Sem sucesso, aparece mensagem clara.
+gatsby-plugin-sitemap e gatsby-plugin-robots-txt para metadados do site.
 
-Node 22
-Se encontrar erros de dependência, use Node 18/20 (nvm/volta) para maior compatibilidade com Gatsby 5.
+🧭 Rotas a partir de arquivos de marcação
 
-“There was a problem loading plugin …”
-Instale os plugins listados no package.json ou remova do gatsby-config.js se não usados.
+Template src/templates/Day.jsx usa dados do plano a partir de JSON (camada estática).
 
-Leitor sem versos
-Cheque version, book (abreviação minúscula), chapter válido para o livro, e verse dentro do range. O VerseSelect já limita automaticamente.
+Suporte a MDX opcional (ex.: content/devocionais/*.mdx), com geração de páginas /devocionais/[slug] pelo gatsby-node.js (se ativado no projeto).
 
-🔧 Personalização / Extensões
+🛠️ Troubleshooting
 
-Plano alternativo: troque content/plan/plan.json (mesma estrutura).
+401/403 na API: token inválido/ausente → ver GATSBY_BIBLIA_TOKEN e rebuild.
 
-Compartilhar versículo: adicione botão “Copiar referência” no Leitor.
+Busca sem retorno: a API é sensível ao payload; a app tenta q/query/search e remove acentos.
 
-i18n: internacionalize labels e livros.
+Node 22: se der conflito de libs, use Node 18/20.
 
-Persistência em nuvem: trocar localStorage por backend (ex.: Supabase) para progresso multi-dispositivo.
+Plugins: “There was a problem loading plugin …” → instale conforme package.json ou ajuste gatsby-config.js.
 
-Analytics: adicionar eventos (ex.: dia concluído) respeitando privacidade.
-
-📦 Scripts úteis
+📦 Scripts
 npm run clean     # limpa cache do Gatsby
 npm run develop   # modo desenvolvimento
 npm run build     # build de produção
@@ -215,38 +192,36 @@ npm run serve     # serve a pasta /public
 
 🔒 Privacidade
 
-O progresso é salvo localmente (localStorage), sem dados pessoais.
+Progresso salvo localmente (sem PII).
 
-Os formulários podem enviar dados sensíveis (pedido de oração). Configure destino seguro (Netlify Forms ou backend próprio) e controle de acesso ao dashboard.
+Formulários podem conter dados sensíveis; use Netlify Forms/backend próprio com acesso restrito e HTTPS.
 
 🤝 Contribuindo
 
-Crie uma branch: feat/minha-melhoria
+Branch: feat/minha-melhoria
 
-Faça commits pequenos e claros
+Commits pequenos e descritivos
 
-Abra PR descrevendo o “por quê” e “como”
+PR com contexto (por quê/como) e prints quando útil
 
-Inclua prints/links quando útil
-
-Padrões: acessibilidade, tema claro/escuro, sem dependências desnecessárias, manter SSG/SPA coesos.
+Padrões: acessibilidade, tema claro/escuro, SSG/SPA coesos, sem dependências desnecessárias.
 
 📜 Licença
 
-Defina a licença conforme diretriz da IFAD (ex.: MIT).
-Copyright (c) IFAD
+Defina conforme diretriz da Elix Sistemas (ex.: MIT).
+Copyright (c) Elix Sistemas
 
 🖼️ Screenshots (sugestão)
 
-/plano (progresso pendente e lido)
+/plano (progresso)
 
-/plano/dia-XYZ (botões abrir refs e concluir)
+/plano/dia-XYZ (UI do dia + concluir)
 
-/app/reader (dropdowns + leitura + concluir dia)
+/app/reader (imersivo + A−/A+)
 
-/app/busca (resultado e fallback)
+/app/busca (resultados)
 
-/pedido-oracao / /contato
+/pedido-oracao e /contato
 
 🙌 Agradecimentos
 
@@ -254,4 +229,4 @@ A Bíblia Digital pela API aberta
 
 Comunidade Gatsby
 
-Equipe e membros da IFAD por inspirar o projeto
+Equipe e membros da IFAD pelo apoio contínuo

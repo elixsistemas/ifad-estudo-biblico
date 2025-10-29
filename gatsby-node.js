@@ -1,46 +1,30 @@
 const path = require("path");
 const plan = require("./content/plan/plan.json");
 
-exports.createPages = async ({ actions }) => {
-  const { createPage } = actions;
-
-  const dayTemplate = path.resolve("./src/templates/Day.jsx");
-  plan.dias.forEach(dia => {
-    createPage({
-      path: `/plano/dia-${dia.id}`,
-      component: dayTemplate,
-      context: { id: dia.id, refs: dia.refs, titulo: plan.titulo || "Plano Anual" },
-    });
-  });
-};
-
-exports.onCreatePage = async ({ page, actions }) => {
-  const { createPage } = actions;
-  if (page.path.match(/^\/app/)) {
-    page.matchPath = "/app/*";     
-    createPage(page);
-  }
-};
-
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions;
 
-  const plan = require("./content/plan/plan.json");
-  const path = require("path");
+  // 1) Páginas do Plano Anual (SSG)
   const dayTemplate = path.resolve("./src/templates/Day.jsx");
-  plan.dias.forEach(dia => {
+  plan.dias.forEach((dia) => {
     createPage({
       path: `/plano/dia-${dia.id}`,
       component: dayTemplate,
-      context: { id: dia.id, refs: dia.refs, titulo: plan.titulo || "Plano Anual" },
+      context: {
+        id: dia.id,
+        refs: dia.refs,
+        titulo: plan.titulo || "Plano Anual",
+      },
     });
   });
 
+  // 2) Páginas de Devocionais (MDX → rotas)
+  const devTemplate = path.resolve("./src/templates/Devocional.jsx"); // respeita caixa
   const result = await graphql(`
     {
       allMdx(
-        filter: { internal: { contentFilePath: { regex: "/content/devocionais/" } } }
-        sort: {frontmatter: {date: DESC}}
+        filter: { internal: { contentFilePath: { regex: "/content[\\\\/]{1}devocionais[\\\\/]/" } } }
+        sort: { frontmatter: { date: DESC } }
       ) {
         nodes {
           id
@@ -51,16 +35,31 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     }
   `);
 
-  if (result.errors) reporter.panic("Erro ao carregar MDX", result.errors);
+  if (result.errors) {
+    reporter.panicOnBuild("Erro ao carregar MDX para devocionais", result.errors);
+    return;
+  }
 
-  const devTemplate = require("path").resolve("./src/templates/devocional.jsx");
-  result.data.allMdx.nodes.forEach(node => {
+  const posts = result.data?.allMdx?.nodes || [];
+  posts.forEach((node) => {
     const slug = node.frontmatter?.slug || node.id;
     createPage({
-      path: `/devocionais/${slug}/`,
+      path: `/devocionais/${slug}`,
       component: `${devTemplate}?__contentFilePath=${node.internal.contentFilePath}`,
-      context: { id: node.id },
+      context: {
+        id: node.id,
+        frontmatter: node.frontmatter || {},
+        slug,
+      },
     });
   });
 };
 
+exports.onCreatePage = async ({ page, actions }) => {
+  const { createPage } = actions;
+  // SPA client-only em /app/*
+  if (/^\/app/.test(page.path)) {
+    page.matchPath = "/app/*";
+    createPage(page);
+  }
+};

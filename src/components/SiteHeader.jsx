@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "gatsby";
-import logo from "../images/logo.png";
+import { StaticImage } from "gatsby-plugin-image";
 
 export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = React.useState(false);
@@ -27,8 +27,8 @@ export default function SiteHeader() {
   return (
     <header className="header">
       <div className="container" style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <Link to="/" className="brand" style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-          <img src={logo} alt="IFAD" />
+        <Link to="/" className="brand" style={{display:"inline-flex",alignItems:"center",gap:10}}>
+          <StaticImage src="../images/logo.png" alt="IFAD" height={40} placeholder="blurred" />
           <strong>Estudo Bíblico IFAD</strong>
         </Link>
 

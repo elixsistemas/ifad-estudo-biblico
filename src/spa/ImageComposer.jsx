@@ -16,28 +16,27 @@ export default function ImageComposer(){
   const [fontColor, setFontColor] = React.useState("#ffffff");
   const [size, setSize] = React.useState(48);
   const [logo, setLogo] = React.useState(true);
-  const W = 1080, H = 1080; // formato quadrado (Instagram)
+  const W = 1080, H = 1080;
+  const [font] = React.useState(28);
 
   React.useEffect(() => {
     const c = canvasRef.current; if(!c) return;
     const ctx = c.getContext("2d");
 
     function draw(bgImg){
-      // fundo
       if(bg === "solid" || !bgImg){
         ctx.fillStyle = color;
         ctx.fillRect(0,0,W,H);
       } else {
-        // cover
+
         const r = Math.max(W/bgImg.width, H/bgImg.height);
         const nw = bgImg.width * r, nh = bgImg.height * r;
         const nx = (W - nw)/2, ny = (H - nh)/2;
         ctx.drawImage(bgImg, nx, ny, nw, nh);
         ctx.fillStyle = "rgba(0,0,0,.25)";
-        ctx.fillRect(0,0,W,H); // overlay para contraste
+        ctx.fillRect(0,0,W,H); 
       }
 
-      // texto
       ctx.fillStyle = fontColor;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -45,15 +44,13 @@ export default function ImageComposer(){
       const margin = 80;
       wrapText(ctx, text, W/2, H/2 - 40, W - margin*2, size * 1.3);
 
-      // referência
       ctx.font = `600 ${Math.max(28, size*0.5)}px Inter, system-ui, sans-serif`;
       ctx.globalAlpha = .95;
       ctx.fillText(ref, W/2, H - 80);
       ctx.globalAlpha = 1;
 
-      // logo opcional (canto inferior direito)
       if(logo && window._ifadLogo){
-        const L = 140; // tamanho do logo
+        const L = 140;
         ctx.globalAlpha = .8;
         ctx.drawImage(window._ifadLogo, W - L - 36, H - L - 36, L, L);
         ctx.globalAlpha = 1;
@@ -70,10 +67,9 @@ export default function ImageComposer(){
     }
   }, [text, ref, bg, color, fontColor, size, logo]);
 
-  // pre-carregar logo (opcional)
   React.useEffect(() => {
     const img = new Image();
-    img.src = "/logo.png"; // coloque o logo em /static/logo.png
+    img.src = "/logo.png";
     img.onload = () => (window._ifadLogo = img);
   }, []);
 
@@ -87,28 +83,28 @@ export default function ImageComposer(){
     <div className="card">
       <div className="form">
         <div className="field">
-          <label>Texto do versículo</label>
+          <label htmlFor="font">Texto do versículo</label>
           <textarea rows={4} value={text} onChange={e=>setText(e.target.value)} />
         </div>
         <div className="field">
-          <label>Referência</label>
-          <input value={ref} onChange={e=>setRef(e.target.value)} />
+          <label htmlFor="font">Referência</label>
+          <input id="font" value={font} onChange={e=>setRef(e.target.value)} />
         </div>
         <div className="field">
-          <label>Fundo</label>
+          <label htmlFor="font">Fundo</label>
           <select value={bg} onChange={e=>setBg(e.target.value)}>
             {PRESETS.map(p => <option key={p.value} value={p.value}>{p.label}</option>)}
           </select>
         </div>
         {bg==="solid" &&
           <div className="field">
-            <label>Cor do fundo</label>
-            <input type="color" value={color} onChange={e=>setColor(e.target.value)} />
+            <label htmlFor="font">Cor do fundo</label>
+            <input id="font" value={font} onChange={e=>setColor(e.target.value)} />
           </div>
         }
         <div className="field">
-          <label>Cor do texto</label>
-          <input type="color" value={fontColor} onChange={e=>setFontColor(e.target.value)} />
+          <label htmlFor="font">Cor do texto</label>
+          <input id="font" value={font} onChange={e=>setFontColor(e.target.value)} />
         </div>
         <div className="field">
           <label>Tamanho do texto: {size}px</label>
@@ -126,7 +122,6 @@ export default function ImageComposer(){
   );
 }
 
-// quebra de linha com largura máxima
 function wrapText(ctx, text, x, y, maxWidth, lineHeight){
   const words = text.split(" ");
   let line = "", lines = [], test;

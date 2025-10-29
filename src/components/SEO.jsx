@@ -1,30 +1,42 @@
 import * as React from "react";
 import { useStaticQuery, graphql } from "gatsby";
 
-export default function SEO({ title, description, image, pathname }) {
+export default function Seo({ title, description, pathname, image }) {
   const { site } = useStaticQuery(graphql`
-    { site { siteMetadata { title description siteUrl } } }
+    query SeoSiteMeta {
+      site {
+        siteMetadata {
+          title
+          description
+          siteUrl
+        }
+      }
+    }
   `);
-  const siteT = site.siteMetadata.title;
-  const siteD = site.siteMetadata.description;
-  const siteU = site.siteMetadata.siteUrl;
 
-  const metaTitle = title ? `${title} | ${siteT}` : siteT;
-  const metaDesc  = description || siteD;
-  const url       = `${siteU}${pathname || ""}`;
-  const metaImage = image ? `${siteU}${image}` : undefined;
+  const meta = site?.siteMetadata ?? {};
+  const metaTitle = title ? `${title} • ${meta.title}` : meta.title;
+  const metaDesc = description || meta.description || "";
+  const url = pathname ? new URL(pathname, meta.siteUrl).toString() : meta.siteUrl;
+  const ogImage = image ? new URL(image, meta.siteUrl).toString() : undefined;
 
   return (
     <>
       <title>{metaTitle}</title>
-      <meta name="description" content={metaDesc} />
-      <meta property="og:site_name" content={siteT} />
-      <meta property="og:type" content="website" />
+      {metaDesc && <meta name="description" content={metaDesc} />}
+
+      {/* Open Graph */}
+      <meta property="og:site_name" content={meta.title} />
       <meta property="og:title" content={metaTitle} />
-      <meta property="og:description" content={metaDesc} />
-      <meta property="og:url" content={url} />
-      {metaImage && <meta property="og:image" content={metaImage} />}
-      <meta name="twitter:card" content="summary_large_image" />
+      {metaDesc && <meta property="og:description" content={metaDesc} />}
+      {url && <meta property="og:url" content={url} />}
+      {ogImage && <meta property="og:image" content={ogImage} />}
+
+      {/* Twitter cards */}
+      <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+      <meta name="twitter:title" content={metaTitle} />
+      {metaDesc && <meta name="twitter:description" content={metaDesc} />}
+      {ogImage && <meta name="twitter:image" content={ogImage} />}
     </>
   );
 }

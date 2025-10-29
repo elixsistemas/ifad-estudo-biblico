@@ -2,8 +2,8 @@ import * as React from "react";
 import { Link } from "gatsby";
 import plan from "../../content/plan/plan.json";
 import SiteHeader from "../components/SiteHeader";
-import SEO from "../components/SEO";
-export const Head = ({ location }) => <SEO pathname={location.pathname} />;
+import Seo from "../components/SEO";
+export const Head = ({ location }) => <Seo pathname={location.pathname} />;
 
 function readLidos() {
   try {

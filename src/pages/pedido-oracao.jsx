@@ -1,7 +1,7 @@
 import * as React from "react";
 import SiteHeader from "../components/SiteHeader";
-import SEO from "../components/SEO";
-export const Head = ({ location }) => <SEO pathname={location.pathname} />;
+import Seo from "../components/SEO";
+export const Head = ({ location }) => <Seo pathname={location.pathname} />;
 
 export default function PedidoOracao(){
   const [erro,setErro]=React.useState("");
@@ -27,7 +27,7 @@ export default function PedidoOracao(){
         <form
           name="pedido-oracao"
           method="POST"
-          action="/sucesso"                 // ✅ obrigado
+          action="/sucesso" 
           data-netlify="true"
           netlify-honeypot="bot-field"
           onSubmit={onSubmit}

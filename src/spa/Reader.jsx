@@ -43,7 +43,6 @@ async function fallback({abbrev,chapter,number}){
 
 // ---------- plano helpers ----------
 function dayIndex(dayId){ return plan.dias.findIndex(d => d.id === dayId); }
-function dayByIndex(i){ return (i>=0 && i<plan.dias.length) ? plan.dias[i] : null; }
 function parseRef(r){ const [b,rest]=r.toLowerCase().split(" "); const [c,v]=(rest||"").split(":"); return { book:b, chapter:Number(c||1), verse: v?Number(v):"" }; }
 function seqDoPlano(dayId){ const dia = plan.dias.find(d=>d.id===dayId); return dia ? dia.refs.map(parseRef) : null; }
 
@@ -98,7 +97,7 @@ export default function Reader(){
   const [abbrev,setAbbrev]=React.useState(init.book);
   const [chapter,setChapter]=React.useState(init.chapter);
   const [number,setNumber]=React.useState(init.verse);
-  const [day,setDay]=React.useState(init.day);
+  const [day] = React.useState(init.day);
   const [idx,setIdx]=React.useState(init.i);
 
   const [loading,setLoading]=React.useState(false);

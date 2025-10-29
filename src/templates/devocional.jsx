@@ -1,27 +1,32 @@
 import * as React from "react";
-import { graphql, Link } from "gatsby";
 import SiteHeader from "../components/SiteHeader";
 
-export default function Devocional({ data, children }) {
-  const post = data.mdx;
+export const Head = ({ pageContext }) => {
+  const title = pageContext?.frontmatter?.title || "Devocional";
+  return (
+    <>
+      <title>{title} • IFAD Leitura</title>
+      <meta name="description" content="Devocional IFAD" />
+    </>
+  );
+};
+
+export default function DevocionalTemplate({ children, pageContext }) {
+  const { frontmatter } = pageContext || {};
   return (
     <>
       <SiteHeader />
       <main className="container">
-        <nav className="breadcrumbs"><Link to="/devocionais/">Devocionais</Link> ▸ {post.frontmatter.title}</nav>
-        <h1>{post.frontmatter.title}</h1>
-        {post.frontmatter.referencia && <p className="pill">{post.frontmatter.referencia}</p>}
-        <article className="texto">{children}</article>
+        <article className="card">
+          <header style={{marginBottom:12}}>
+            <h1 style={{margin:"0 0 6px"}}>{frontmatter?.title || "Devocional"}</h1>
+            {frontmatter?.date && (
+              <div className="note">{new Date(frontmatter.date).toLocaleDateString()}</div>
+            )}
+          </header>
+          <div className="texto">{children}</div>
+        </article>
       </main>
     </>
   );
 }
-
-export const query = graphql`
-  query DevocionalById($id: String!) {
-    mdx(id: {eq: $id}) {
-      frontmatter { title referencia date(formatString: "DD/MM/YYYY") }
-      excerpt(pruneLength: 160)
-    }
-  }
-`;

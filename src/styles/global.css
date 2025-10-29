@@ -34,12 +34,22 @@ a:hover{ text-decoration:underline; }
   position:sticky; top:0; z-index:30; backdrop-filter:blur(6px);
   border-bottom:1px solid var(--line); padding:12px 0; margin-bottom:16px;
 }
-.header .brand{ display:inline-flex; align-items:center; gap:10px; }
+.header .brand{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
 .header .brand strong{
   font-size:clamp(1.05rem, 1.2rem + 0.4vw, 1.6rem);
   font-weight:800; letter-spacing:.2px;
 }
-.header img{ height:68px; }
+.header .logo{
+  display:block;
+  width:auto;
+  height:68px;
+  max-height:68px;   
+  object-fit:contain; 
+}
 .header .right{ margin-left:auto; display:flex; gap:12px; align-items:center; }
 .theme-switch{
   background:transparent; border:1px solid var(--line); color:var(--fg);
@@ -280,7 +290,7 @@ html[data-theme="light"] .progress .label{ color:#111; }
 @media (max-width:768px){
   .container{ padding:18px 14px; }
   .header{ padding:8px 0; }
-  .header img{ height:40px; }
+  .header .logo{ height:40px; }
   .header .brand strong{ font-size:clamp(1rem, 2.6vw, 1.25rem); letter-spacing:.1px; }
 
   .btn{ min-height:44px; width:100%; }
@@ -379,3 +389,34 @@ html[data-theme="light"] .progress .label{ color:#111; }
 @supports (padding: max(0px)){
   .focus-bottom{ padding-bottom: max(14px, env(safe-area-inset-bottom)); }
 }
+/* Linha do consentimento (checkbox + texto) */
+.checkbox-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0 16px;
+}
+
+/* Deixa o checkbox maior, com cor da marca e acessível */
+input[type="checkbox"]{
+  width: 22px;
+  height: 22px;
+  accent-color: var(--brand);           /* cor nativa do check */
+  border: 1.5px solid var(--line);
+  border-radius: 6px;                    /* quadradinho levemente arredondado */
+  vertical-align: middle;
+}
+
+input[type="checkbox"]:focus-visible{
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* iOS/Safari: pequeno ajuste de baseline */
+@supports (-webkit-touch-callout: none) {
+  input[type="checkbox"]{ transform: translateY(1px); }
+}
+
+/* Evita seleção acidental do texto ao marcar */
+.checkbox-row label{ user-select: none; }

@@ -1,8 +1,9 @@
 import * as React from "react";
-import { Link } from "gatsby";
+import { Link, navigate } from "gatsby";
 import SiteHeader from "../components/SiteHeader";
-import SEO from "../components/SEO";
-export const Head = ({ location }) => <SEO pathname={location.pathname} />;
+import Seo from "../components/SEO";
+import PrimaryButton from "../components/PrimaryButton";
+export const Head = ({ location }) => <Seo pathname={location.pathname} />;
 
 export default function Home() {
   return (
@@ -13,8 +14,8 @@ export default function Home() {
           <h1>Estudo Bíblico IFAD</h1>
           <p className="note">Leitura diária e plano anual com progresso.</p>
           <div className="cta">
-            <Link className="btn" to="/plano">Plano Anual</Link>
-            <Link className="btn outline" to="/app/reader">Leitura</Link>
+            <PrimaryButton onClick={()=>navigate("/plano")}>Plano Anual</PrimaryButton>
+            <Link className="btn outline" to="/app/reader">Leitura</Link>      
           </div>
         </header>
 
