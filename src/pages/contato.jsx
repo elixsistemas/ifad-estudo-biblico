@@ -25,7 +25,7 @@ export default function Contato(){
         <form
           name="contato"
           method="POST"
-          action="/sucesso"                 // ✅ redireciona após envio
+          action="/sucesso/"                 // ✅ redireciona após envio
           data-netlify="true"
           netlify-honeypot="bot-field"
           onSubmit={onSubmit}

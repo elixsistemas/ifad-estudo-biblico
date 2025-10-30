@@ -27,7 +27,7 @@ export default function PedidoOracao(){
         <form
           name="pedido-oracao"
           method="POST"
-          action="/sucesso" 
+          action="/sucesso/" 
           data-netlify="true"
           netlify-honeypot="bot-field"
           onSubmit={onSubmit}
