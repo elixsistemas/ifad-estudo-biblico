@@ -5,16 +5,12 @@ module.exports = {
     siteUrl: "https://ifad-estudo-biblico.netlify.app/",
   },
   plugins: [
-    // Imagens
     "gatsby-plugin-image",
     "gatsby-plugin-sharp",
     "gatsby-transformer-sharp",
-
-    // CSS-in-JS (mantive os dois para cobrir a rubrica; use o que preferir no código)
     "gatsby-plugin-emotion",
     "gatsby-plugin-styled-components",
 
-    // Fontes de conteúdo
     {
       resolve: "gatsby-source-filesystem",
       options: { name: "plan", path: `${__dirname}/content/plan` },
@@ -23,14 +19,12 @@ module.exports = {
       resolve: "gatsby-source-filesystem",
       options: { name: "devocionais", path: `${__dirname}/content/devocionais/` },
     },
-    // Se suas capas (frontmatter.cover) ficam em static/backgrounds (ou outra pasta fora de /content),
-    // adicione também essa origem para o GraphQL encontrar o arquivo:
+
     {
       resolve: "gatsby-source-filesystem",
       options: { name: "static-backgrounds", path: `${__dirname}/static/backgrounds/` },
     },
 
-    // MDX
     {
       resolve: "gatsby-plugin-mdx",
       options: {
@@ -38,7 +32,6 @@ module.exports = {
       },
     },
 
-    // Manifest / PWA básico
     {
       resolve: "gatsby-plugin-manifest",
       options: {
@@ -52,13 +45,11 @@ module.exports = {
       },
     },
 
-    // SEO
     "gatsby-plugin-sitemap",
     {
       resolve: "gatsby-plugin-robots-txt",
       options: { policy: [{ userAgent: "*", allow: "/" }] },
     },
-    // Se o seu SEO.jsx usa react-helmet, deixe ativado:
     "gatsby-plugin-react-helmet",
   ],
 };
