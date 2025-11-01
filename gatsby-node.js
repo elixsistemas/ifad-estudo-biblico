@@ -1,5 +1,20 @@
+// gatsby-node.js
 const path = require("path");
 const plan = require("./content/plan/plan.json");
+
+exports.createSchemaCustomization = ({ actions }) => {
+  const { createTypes } = actions;
+  createTypes(/* GraphQL */ `
+    type MdxFrontmatter @infer {
+      title: String!
+      slug: String
+      date: Date @dateformat
+      description: String
+      reader: String
+      cover: File @fileByRelativePath
+    }
+  `);
+};
 
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions;
@@ -19,11 +34,11 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   });
 
   // 2) Páginas de Devocionais (MDX → rotas)
-  const devTemplate = path.resolve("./src/templates/Devocional.jsx"); // respeita caixa
+  const devTemplate = path.resolve("./src/templates/Devocional.jsx");
   const result = await graphql(`
     {
       allMdx(
-        filter: { internal: { contentFilePath: { regex: "/content[\\\\/]{1}devocionais[\\\\/]/" } } }
+        filter: { internal: { contentFilePath: { regex: "/content/(devocionais)/" } } }
         sort: { frontmatter: { date: DESC } }
       ) {
         nodes {
@@ -55,9 +70,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   });
 };
 
+// SPA client-only em /app/*
 exports.onCreatePage = async ({ page, actions }) => {
   const { createPage } = actions;
-  // SPA client-only em /app/*
   if (/^\/app/.test(page.path)) {
     page.matchPath = "/app/*";
     createPage(page);
