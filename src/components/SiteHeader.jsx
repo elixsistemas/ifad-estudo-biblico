@@ -50,6 +50,7 @@ export default function SiteHeader() {
           <Link to="/devocionais/" onClick={() => setMenuOpen(false)}>Devocionais</Link>
           <Link to="/pedido-oracao" onClick={() => setMenuOpen(false)}>Pedido de Oração</Link>
           <Link to="/contato" onClick={() => setMenuOpen(false)}>Contato</Link>
+          <Link to="/sobre" onClick={() => setMenuOpen(false)}>Sobre</Link>
           <button
             className="theme-switch"
             onClick={() => setTheme(t => (t === "dark" ? "light" : "dark"))}
