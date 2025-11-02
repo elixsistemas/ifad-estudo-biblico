@@ -84,12 +84,14 @@ function ref(abbr, chap) { return `${abbr.toUpperCase()} ${chap}`.replace("JÓ",
 function buildCoverPlan() {
   const refs = [];
   for (const b of BOOKS) for (let c=1; c<=b.ch; c++) refs.push(ref(b.abbr, c));
-  // distribuir em 365 dias (tamanho aproximado por dia)
-  const perDay = Math.ceil(refs.length / 365); // ~ (1189/365 ≈ 3.26)
+  // distribuir em 365 dias (balanceado, sem deixar dias vazios)
+  const totalDias = 365;
   const dias = [];
-  for (let i=0; i<365; i++) {
-    const slice = refs.slice(i*perDay, (i+1)*perDay);
-    if (slice.length === 0) break;
+  for (let i=0; i<totalDias; i++) {
+    const start = Math.floor((refs.length * i) / totalDias);
+    const end = Math.floor((refs.length * (i+1)) / totalDias);
+    const slice = refs.slice(start, end);
+    if (slice.length === 0) continue;
     dias.push({ id: pad3(i+1), refs: slice });
   }
   return { titulo: "Plano Anual (Capa-a-capa)", dias };
