@@ -65,7 +65,7 @@ export default function SobrePage() {
           <article className="card">
             <h2>Ministérios em ação</h2>
             <p>
-              Para atender às diferentes faixas etárias, contamos com ministérios de crianças, adolescentes, jovens
+              Para atender às diferentes faixas etárias, contamos com ministérios de crianças, adolescentes, jovens,
               homens, mulheres e casais, além de grupos de louvor, intercessão, ação social e missões. Cada equipe é 
               formada por voluntários treinados que servem com alegria e trabalham em unidade com a liderança pastoral.
             </p>
