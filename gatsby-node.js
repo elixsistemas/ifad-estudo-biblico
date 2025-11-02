@@ -1,4 +1,3 @@
-// gatsby-node.js
 const path = require("path");
 const plan = require("./content/plan/plan.json");
 

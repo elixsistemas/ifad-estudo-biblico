@@ -14,10 +14,13 @@ function uniqByAbbrev(list) {
 
 export default function VersionSelect({ value, onChange, id="version" }) {
   const [items, setItems] = React.useState([
-    { abbrev:"acf", version:"Almeida Corrigida Fiel" },
-    { abbrev:"ara", version:"Almeida Revista e Atualizada" },
-    { abbrev:"nvi", version:"Nova Versão Internacional" },
-    { abbrev:"nvt", version:"Nova Versão Transformadora" },
+    { abbrev: "acf", version: "Almeida Corrigida Fiel" },
+    { abbrev: "apee", version: "Louis Segond (francês)" },
+    { abbrev: "bbe", version: "Bible in Basic English (inglês)" },
+    { abbrev: "kjv", version: "King James Version (inglês)" },
+    { abbrev: "nvi", version: "Nova Versão Internacional" },
+    { abbrev: "ra",  version: "Almeida Revista e Atualizada" },
+    { abbrev: "rvr", version: "Reina-Valera (espanhol)" },
   ]);
 
   React.useEffect(() => {

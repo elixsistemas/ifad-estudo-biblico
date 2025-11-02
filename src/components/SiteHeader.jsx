@@ -24,13 +24,19 @@ export default function SiteHeader() {
     }
   }, [theme]);
 
-  // fecha o menu ao navegar
   const closeMenu = () => setMenuOpen(false);
+
+  // Fechar com ESC quando aberto (acessibilidade)
+  React.useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   return (
     <header className="header">
       <div className="container header-wrap">
-        {/* Linha 1: marca centralizada + switches */}
         <div className="brand-row">
           <Link to="/" className="brand" onClick={closeMenu}>
             <StaticImage
@@ -46,7 +52,6 @@ export default function SiteHeader() {
           </Link>
 
           <div className="header-actions">
-            {/* Toggle mobile (visível só no mobile via CSS) */}
             <button
               className="nav-toggle"
               aria-expanded={menuOpen}
@@ -66,21 +71,20 @@ export default function SiteHeader() {
           </div>
         </div>
 
-        {/* Linha 2: nav em pílulas; no mobile aparece só quando aberto */}
         <nav
           id="mainmenu"
           className={`nav-row ${menuOpen ? "is-open" : ""}`}
           aria-label="Navegação principal"
         >
-          <ul className="nav-list" onClick={closeMenu}>
-            <li><Link activeClassName="is-active" to="/plano">Plano Anual</Link></li>
-            <li><Link activeClassName="is-active" to="/app/reader">Leitura</Link></li>
-            <li><Link activeClassName="is-active" to="/devocionais/">Devocionais</Link></li>
-            <li><Link activeClassName="is-active" to="/app/busca">Busca</Link></li>
-            <li><Link activeClassName="is-active" to="/pedido-oracao">Pedido de Oração</Link></li>
-            <li><Link activeClassName="is-active" to="/criar-imagem">Criar Imagem</Link></li>
-            <li><Link activeClassName="is-active" to="/contato">Contato</Link></li>
-            <li><Link activeClassName="is-active" to="/sobre">Sobre a IFAD</Link></li>
+          <ul className="nav-list">
+            <li><Link activeClassName="is-active" to="/plano" onClick={closeMenu}>Plano Anual</Link></li>
+            <li><Link activeClassName="is-active" to="/app/reader" onClick={closeMenu}>Leitura</Link></li>
+            <li><Link activeClassName="is-active" to="/devocionais/" onClick={closeMenu}>Devocionais</Link></li>
+            <li><Link activeClassName="is-active" to="/app/busca" onClick={closeMenu}>Busca</Link></li>
+            <li><Link activeClassName="is-active" to="/pedido-oracao" onClick={closeMenu}>Pedido de Oração</Link></li>
+            <li><Link activeClassName="is-active" to="/criar-imagem" onClick={closeMenu}>Criar Imagem</Link></li>
+            <li><Link activeClassName="is-active" to="/contato" onClick={closeMenu}>Contato</Link></li>
+            <li><Link activeClassName="is-active" to="/sobre" onClick={closeMenu}>Sobre a IFAD</Link></li>
           </ul>
         </nav>
       </div>
