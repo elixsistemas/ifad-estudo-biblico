@@ -3,7 +3,6 @@ import { Link } from "gatsby";
 import { StaticImage } from "gatsby-plugin-image";
 
 export default function SiteHeader() {
-  const [menuOpen, setMenuOpen] = React.useState(false);
   const [theme, setTheme] = React.useState(
     typeof document !== "undefined"
       ? document.documentElement.getAttribute("data-theme") || "dark"
@@ -26,37 +25,43 @@ export default function SiteHeader() {
 
   return (
     <header className="header">
-      <div className="container" style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <Link to="/" className="brand" style={{display:"inline-flex",alignItems:"center",gap:10}}>
-          <StaticImage src="../images/logo.png" alt="IFAD" height={40} placeholder="blurred" />
-          <strong>Estudo Bíblico IFAD</strong>
-        </Link>
+      <div className="container header-wrap">
+        {/* Linha 1: marca centralizada */}
+        <div className="brand-row">
+          <Link to="/" className="brand">
+            <StaticImage
+              src="../images/logo.png"
+              alt="IFAD"
+              height={44}
+              placeholder="blurred"
+              className="brand-logo"
+            />
+            <div className="brand-text">
+              <strong className="brand-bottom">Estudo Bíblico IFAD</strong>
+            </div>
+          </Link>
 
-        {/* botão só visível no mobile via CSS */}
-        <button
-          className="nav-toggle"
-          aria-expanded={menuOpen}
-          aria-controls="main-nav"
-          onClick={() => setMenuOpen(v => !v)}
-        >
-          ☰ Menu
-        </button>
-
-        <nav id="main-nav" className={`right${menuOpen ? " is-open" : ""}`}>
-          <Link to="/plano" onClick={() => setMenuOpen(false)}>Plano Anual</Link>
-          <Link to="/app/reader" onClick={() => setMenuOpen(false)}>Leitura</Link>
-          <Link to="/app/busca" onClick={() => setMenuOpen(false)}>Busca</Link>
-          <Link to="/criar-imagem" onClick={() => setMenuOpen(false)}>Criar Imagem</Link>
-          <Link to="/devocionais/" onClick={() => setMenuOpen(false)}>Devocionais</Link>
-          <Link to="/pedido-oracao" onClick={() => setMenuOpen(false)}>Pedido de Oração</Link>
-          <Link to="/contato" onClick={() => setMenuOpen(false)}>Contato</Link>
-          <Link to="/sobre" onClick={() => setMenuOpen(false)}>Sobre</Link>
           <button
             className="theme-switch"
             onClick={() => setTheme(t => (t === "dark" ? "light" : "dark"))}
+            aria-label="Alternar tema claro/escuro"
           >
             {theme === "dark" ? "🌙 Escuro" : "☀️ Claro"}
           </button>
+        </div>
+
+        {/* Linha 2: menu em pílulas (rolável no mobile) */}
+        <nav className="nav-row" aria-label="Navegação principal">
+          <ul className="nav-list">
+            <li><Link activeClassName="is-active" to="/plano">Plano Anual</Link></li>
+            <li><Link activeClassName="is-active" to="/app/reader">Leitura</Link></li>
+            <li><Link activeClassName="is-active" to="/devocionais/">Devocionais</Link></li>
+            <li><Link activeClassName="is-active" to="/app/busca">Busca</Link></li>
+            <li><Link activeClassName="is-active" to="/pedido-oracao">Pedido de Oração</Link></li>
+            <li><Link activeClassName="is-active" to="/criar-imagem">Criar Imagem</Link></li>
+            <li><Link activeClassName="is-active" to="/contato">Contato</Link></li>
+            <li><Link activeClassName="is-active" to="/sobre">Sobre a IFAD</Link></li>
+          </ul>
         </nav>
       </div>
     </header>
