@@ -49,6 +49,7 @@ export default function SiteHeader() {
           <Link to="/criar-imagem" onClick={() => setMenuOpen(false)}>Criar Imagem</Link>
           <Link to="/devocionais/" onClick={() => setMenuOpen(false)}>Devocionais</Link>
           <Link to="/pedido-oracao" onClick={() => setMenuOpen(false)}>Pedido de Oração</Link>
+          <Link to="/sobre" onClick={() => setMenuOpen(false)}>Sobre a IFAD</Link>
           <Link to="/contato" onClick={() => setMenuOpen(false)}>Contato</Link>
           <button
             className="theme-switch"
