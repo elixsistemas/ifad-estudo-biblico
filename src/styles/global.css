@@ -571,3 +571,48 @@ nav.tabs a:hover{ background:var(--card); }
   .hero-sobre .page-title,
   .hero-sobre .page-sub{ margin-left: 8px; }
 }
+
+/* alinhar ações à direita da marca */
+.header-actions { position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; gap:8px; }
+
+/* botão hambúrguer: escondido no desktop */
+.nav-toggle{
+  display:none;
+  border:1px solid var(--ring);
+  background:var(--bg);
+  color:inherit;
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+}
+
+/* estado padrão do nav no mobile: fechado */
+@media (max-width: 768px){
+  .nav-toggle{ display:inline-flex; }
+  .theme-switch{ padding:6px 10px; } /* compacta ao lado do toggle */
+
+  .nav-row{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .25s ease;
+    /* mantém o fade e o snap quando aberto */
+  }
+  .nav-row.is-open{
+    max-height:220px;            /* suficiente para 2 linhas de pílulas */
+    padding-top:6px;             /* respiro quando abre */
+  }
+
+  /* empilha as pílulas em várias linhas no mobile quando aberto */
+  .nav-list{
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    gap:8px;
+    padding:8px 0 2px;
+    -webkit-mask-image:none; mask-image:none; /* sem fade quando aberto empilhado */
+  }
+}
+
+/* desktop intacto (já tinha) */
+@media (min-width: 769px){
+  .header-actions{ gap:10px; }
+}

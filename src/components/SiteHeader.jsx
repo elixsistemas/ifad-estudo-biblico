@@ -3,6 +3,7 @@ import { Link } from "gatsby";
 import { StaticImage } from "gatsby-plugin-image";
 
 export default function SiteHeader() {
+  const [menuOpen, setMenuOpen] = React.useState(false);
   const [theme, setTheme] = React.useState(
     typeof document !== "undefined"
       ? document.documentElement.getAttribute("data-theme") || "dark"
@@ -23,12 +24,15 @@ export default function SiteHeader() {
     }
   }, [theme]);
 
+  // fecha o menu ao navegar
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <header className="header">
       <div className="container header-wrap">
-        {/* Linha 1: marca centralizada */}
+        {/* Linha 1: marca centralizada + switches */}
         <div className="brand-row">
-          <Link to="/" className="brand">
+          <Link to="/" className="brand" onClick={closeMenu}>
             <StaticImage
               src="../images/logo.png"
               alt="IFAD"
@@ -41,18 +45,34 @@ export default function SiteHeader() {
             </div>
           </Link>
 
-          <button
-            className="theme-switch"
-            onClick={() => setTheme(t => (t === "dark" ? "light" : "dark"))}
-            aria-label="Alternar tema claro/escuro"
-          >
-            {theme === "dark" ? "🌙 Escuro" : "☀️ Claro"}
-          </button>
+          <div className="header-actions">
+            {/* Toggle mobile (visível só no mobile via CSS) */}
+            <button
+              className="nav-toggle"
+              aria-expanded={menuOpen}
+              aria-controls="mainmenu"
+              onClick={() => setMenuOpen(v => !v)}
+            >
+              ☰ Menu
+            </button>
+
+            <button
+              className="theme-switch"
+              onClick={() => setTheme(t => (t === "dark" ? "light" : "dark"))}
+              aria-label="Alternar tema claro/escuro"
+            >
+              {theme === "dark" ? "🌙 Escuro" : "☀️ Claro"}
+            </button>
+          </div>
         </div>
 
-        {/* Linha 2: menu em pílulas (rolável no mobile) */}
-        <nav className="nav-row" aria-label="Navegação principal">
-          <ul className="nav-list">
+        {/* Linha 2: nav em pílulas; no mobile aparece só quando aberto */}
+        <nav
+          id="mainmenu"
+          className={`nav-row ${menuOpen ? "is-open" : ""}`}
+          aria-label="Navegação principal"
+        >
+          <ul className="nav-list" onClick={closeMenu}>
             <li><Link activeClassName="is-active" to="/plano">Plano Anual</Link></li>
             <li><Link activeClassName="is-active" to="/app/reader">Leitura</Link></li>
             <li><Link activeClassName="is-active" to="/devocionais/">Devocionais</Link></li>
