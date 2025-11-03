@@ -264,3 +264,20 @@ hr,.rule,.hero+.container>.rule{border:0;height:1px;background:linear-gradient(9
 @media (min-width: 769px){
   .theme-slot-mobile{ display:none; }
 }
+
+
+
+.hero-sobre{ --hero-text-margin: 20px; }
+.hero-sobre .kicker,
+.hero-sobre .page-title,
+.hero-sobre .page-sub{ margin-left: var(--hero-text-margin); }
+
+.hero-sobre .page-title{ margin-top: 4px; margin-bottom: 6px; }
+.hero-sobre .page-sub{ margin-top: 8px; }
+
+@media (max-width: 480px){
+  .hero-sobre{ --hero-text-margin: 10px; }
+}
+
+
+.hero-sobre .page-sub{ line-height: 1.65; }
