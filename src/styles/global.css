@@ -265,16 +265,21 @@ hr,.rule,.hero+.container>.rule{border:0;height:1px;background:linear-gradient(9
   .theme-slot-mobile{ display:none; }
 }
 
-.hero-sobre{ --hero-text-margin: 20px; }
+/* respiro só no texto do hero */
 .hero-sobre .kicker,
 .hero-sobre .page-title,
-.hero-sobre .page-sub{ margin-left: var(--hero-text-margin); }
+.hero-sobre .page-sub{
+  margin-left: 20px; 
+}
 
 .hero-sobre .page-title{ margin-top: 4px; margin-bottom: 6px; }
 .hero-sobre .page-sub{ margin-top: 8px; }
 
+/* ajuste fino em telas pequenas */
 @media (max-width: 480px){
-  .hero-sobre{ --hero-text-margin: 10px; }
+  .hero-sobre .kicker,
+  .hero-sobre .page-title,
+  .hero-sobre .page-sub{ margin-left: 8px; }
 }
 
 .hero-sobre .page-sub{ line-height: 1.65; }
