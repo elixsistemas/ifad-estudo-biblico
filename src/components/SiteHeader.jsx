@@ -6,8 +6,8 @@ export default function SiteHeader() {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [theme, setTheme] = React.useState(
     typeof document !== "undefined"
-      ? document.documentElement.getAttribute("data-theme") || "dark"
-      : "dark"
+      ? document.documentElement.getAttribute("data-theme") || "light"
+      : "light"
   );
 
   React.useEffect(() => {
@@ -24,68 +24,65 @@ export default function SiteHeader() {
     }
   }, [theme]);
 
-  const closeMenu = () => setMenuOpen(false);
-
-  // Fechar com ESC quando aberto (acessibilidade)
+  // ESC fecha menu
   React.useEffect(() => {
     if (!menuOpen) return;
-    const onKey = (e) => { if (e.key === "Escape") setMenuOpen(false); };
+    const onKey = (e) => e.key === "Escape" && setMenuOpen(false);
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [menuOpen]);
 
+  const ThemeButton = ({ className = "" }) => (
+    <button
+      className={`theme-switch ${className}`}
+      onClick={() => setTheme(t => (t === "dark" ? "light" : "dark"))}
+      aria-label="Alternar tema claro/escuro"
+    >
+      {theme === "dark" ? "🌙 Escuro" : "☀️ Claro"}
+    </button>
+  );
+
   return (
-    <header className="header">
-      <div className="container header-wrap">
-        <div className="brand-row">
-          <Link to="/" className="brand" onClick={closeMenu}>
-            <StaticImage
-              src="../images/logo.png"
-              alt="IFAD"
-              height={44}
-              placeholder="blurred"
-              className="brand-logo"
-            />
-            <div className="brand-text">
-              <strong className="brand-bottom">Estudo Bíblico IFAD</strong>
-            </div>
+    <header className="site-header">
+      <div className="site-header__inner">
+        {/* faixa superior */}
+        <div className="topbar">
+          <Link to="/" className="brand" aria-label="Página inicial" onClick={() => setMenuOpen(false)}>
+            <StaticImage src="../images/logo.png" alt="IFAD" height={36} placeholder="blurred" />
+            <strong className="brand__title">Estudo Bíblico IFAD</strong>
           </Link>
 
-          <div className="header-actions">
+          <div className="topbar__actions">
+            {/* Tema no topo só em telas >= 769px */}
+            <ThemeButton className="theme-switch--top" />
             <button
               className="nav-toggle"
               aria-expanded={menuOpen}
-              aria-controls="mainmenu"
+              aria-controls="main-nav"
               onClick={() => setMenuOpen(v => !v)}
             >
               ☰ Menu
             </button>
-
-            <button
-              className="theme-switch"
-              onClick={() => setTheme(t => (t === "dark" ? "light" : "dark"))}
-              aria-label="Alternar tema claro/escuro"
-            >
-              {theme === "dark" ? "🌙 Escuro" : "☀️ Claro"}
-            </button>
           </div>
         </div>
 
-        <nav
-          id="mainmenu"
-          className={`nav-row ${menuOpen ? "is-open" : ""}`}
-          aria-label="Navegação principal"
-        >
-          <ul className="nav-list">
-            <li><Link activeClassName="is-active" to="/plano" onClick={closeMenu}>Plano Anual</Link></li>
-            <li><Link activeClassName="is-active" to="/app/reader" onClick={closeMenu}>Leitura</Link></li>
-            <li><Link activeClassName="is-active" to="/devocionais/" onClick={closeMenu}>Devocionais</Link></li>
-            <li><Link activeClassName="is-active" to="/app/busca" onClick={closeMenu}>Busca</Link></li>
-            <li><Link activeClassName="is-active" to="/pedido-oracao" onClick={closeMenu}>Pedido de Oração</Link></li>
-            <li><Link activeClassName="is-active" to="/criar-imagem" onClick={closeMenu}>Criar Imagem</Link></li>
-            <li><Link activeClassName="is-active" to="/contato" onClick={closeMenu}>Contato</Link></li>
-            <li><Link activeClassName="is-active" to="/sobre" onClick={closeMenu}>Sobre a IFAD</Link></li>
-          </ul>
+        {/* navegação: desktop = linha de pílulas; mobile = drop-down */}
+        <nav id="main-nav" className={`mainnav ${menuOpen ? "is-open" : ""}`} aria-label="Navegação principal">
+          <div className="mainnav__row">
+            <Link activeClassName="is-active" to="/plano" onClick={() => setMenuOpen(false)}>Plano Anual</Link>
+            <Link activeClassName="is-active" to="/app/reader" onClick={() => setMenuOpen(false)}>Leitura</Link>
+            <Link activeClassName="is-active" to="/app/busca" onClick={() => setMenuOpen(false)}>Busca</Link>
+            <Link activeClassName="is-active" to="/criar-imagem" onClick={() => setMenuOpen(false)}>Criar Imagem</Link>
+            <Link activeClassName="is-active" to="/devocionais/" onClick={() => setMenuOpen(false)}>Devocionais</Link>
+            <Link activeClassName="is-active" to="/pedido-oracao" onClick={() => setMenuOpen(false)}>Pedido de Oração</Link>
+            <Link activeClassName="is-active" to="/contato" onClick={() => setMenuOpen(false)}>Contato</Link>
+            <Link activeClassName="is-active" to="/sobre" onClick={() => setMenuOpen(false)}>Sobre</Link>
+
+            {/* Tema dentro do menu só no mobile */}
+            <div className="theme-slot-mobile">
+              <ThemeButton />
+            </div>
+          </div>
         </nav>
       </div>
     </header>
