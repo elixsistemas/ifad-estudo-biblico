@@ -245,7 +245,22 @@ nav.tabs a:hover{background:var(--card)}
   :root[data-theme="dark"] .site-header .theme-slot-mobile .theme-switch{background:#101827;border-color:#1f2937;color:#e5e7eb}
 }
 
-/* detalhes de divisão e respiração */
 main,.page,.hero{scroll-margin-top:84px}
 hr,.rule,.hero+.container>.rule{border:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);margin:16px 0 24px}
 :root[data-theme="light"] hr,:root[data-theme="light"] .rule{background:linear-gradient(90deg,transparent,rgba(0,0,0,.12),transparent)}
+
+.site-header .topbar{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  justify-items:center;
+}
+
+.site-header .brand{ grid-column:2; }
+.site-header .topbar__actions{ grid-column:3; justify-self:end; }
+
+.site-header .mainnav__row{ justify-content:center; }
+
+@media (min-width: 769px){
+  .theme-slot-mobile{ display:none; }
+}
