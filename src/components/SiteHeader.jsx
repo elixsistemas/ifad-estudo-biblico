@@ -124,7 +124,7 @@ export default function SiteHeader() {
               Contato
             </Link>
             <Link activeClassName="is-active" to="/sobre" onClick={closeMenu}>
-              Sobre
+              Sobre a IFAD
             </Link>
 
             {/* Tema dentro do menu somente no mobile (CSS oculta no desktop) */}
