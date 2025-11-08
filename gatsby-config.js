@@ -1,12 +1,8 @@
 module.exports = {
   siteMetadata: {
-    title: "IFAD – Leitura bíblica e devocionais",
+    title: "IFAD Leitura",
     description: "Plataforma de leitura bíblica e devocionais da IFAD.",
-    siteUrl: "https://biblia.ifad.com.br",
-    image: "/capas/capa_3.png",
-    social: {
-      instagram: "https://www.instagram.com/ifadoficial",
-    },
+    siteUrl: "https://ifad-estudo-biblico.netlify.app/",
   },
   plugins: [
     "gatsby-plugin-image",
@@ -14,6 +10,7 @@ module.exports = {
     "gatsby-transformer-sharp",
     "gatsby-plugin-emotion",
     "gatsby-plugin-styled-components",
+
     {
       resolve: "gatsby-source-filesystem",
       options: { name: "plan", path: `${__dirname}/content/plan` },
@@ -22,14 +19,19 @@ module.exports = {
       resolve: "gatsby-source-filesystem",
       options: { name: "devocionais", path: `${__dirname}/content/devocionais/` },
     },
+
     {
       resolve: "gatsby-source-filesystem",
       options: { name: "static-backgrounds", path: `${__dirname}/static/backgrounds/` },
     },
+
     {
       resolve: "gatsby-plugin-mdx",
-      options: { extensions: [".mdx", ".md"] },
+      options: {
+        extensions: [".mdx", ".md"],
+      },
     },
+
     {
       resolve: "gatsby-plugin-manifest",
       options: {
@@ -42,6 +44,7 @@ module.exports = {
         icon: "src/images/icon.png",
       },
     },
+
     "gatsby-plugin-sitemap",
     {
       resolve: "gatsby-plugin-robots-txt",
