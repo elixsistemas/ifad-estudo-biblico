@@ -1,5 +1,6 @@
 import * as React from "react";
 import { useStaticQuery, graphql } from "gatsby";
+import { Helmet } from "react-helmet";
 
 export default function Seo({ title, description, pathname, image }) {
   const { site } = useStaticQuery(graphql`
@@ -40,8 +41,8 @@ export default function Seo({ title, description, pathname, image }) {
   };
 
   return (
-    <>
-      {/* Title */}
+    <Helmet>
+      {/* Título */}
       <title>{metaTitle}</title>
       {metaDesc && <meta name="description" content={metaDesc} />}
 
@@ -51,7 +52,14 @@ export default function Seo({ title, description, pathname, image }) {
       <meta property="og:title" content={metaTitle} />
       {metaDesc && <meta property="og:description" content={metaDesc} />}
       {url && <meta property="og:url" content={url} />}
-      {ogImage && <meta property="og:image" content={ogImage} />}
+      {ogImage && (
+        <>
+          <meta property="og:image" content={ogImage} />
+          <meta property="og:image:type" content="image/png" />
+          <meta property="og:image:width" content="768" />
+          <meta property="og:image:height" content="1152" />
+        </>
+      )}
 
       {/* Twitter */}
       <meta
@@ -68,6 +76,6 @@ export default function Seo({ title, description, pathname, image }) {
       <script type="application/ld+json">
         {JSON.stringify(orgJsonLd)}
       </script>
-    </>
+    </Helmet>
   );
 }
