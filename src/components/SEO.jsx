@@ -19,7 +19,7 @@ export default function Seo({ title, description, pathname, image }) {
     }
   `);
 
-  const meta = site?.siteMetadata ?? {};
+  const meta = site.siteMetadata;
 
   const metaTitle = title ? `${title} • ${meta.title}` : meta.title;
   const metaDesc = description || meta.description || "";
@@ -30,7 +30,7 @@ export default function Seo({ title, description, pathname, image }) {
   const baseImage = image || meta.image;
   const ogImage = baseImage
     ? new URL(baseImage, meta.siteUrl).toString()
-    : undefined;
+    : null;
 
   const orgJsonLd = {
     "@context": "https://schema.org",
@@ -42,7 +42,7 @@ export default function Seo({ title, description, pathname, image }) {
 
   return (
     <Helmet>
-      {/* Título */}
+      {/* Title */}
       <title>{metaTitle}</title>
       {metaDesc && <meta name="description" content={metaDesc} />}
 
