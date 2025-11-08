@@ -3,7 +3,7 @@ module.exports = {
     title: "IFAD – Leitura bíblica e devocionais",
     description: "Plataforma de leitura bíblica e devocionais da IFAD.",
     siteUrl: "https://biblia.ifad.com.br",
-    image: "/capas/capa_3.png",
+    image: "capas/capa_3.png",
     social: {
       instagram: "https://www.instagram.com/ifadoficial",
     },
